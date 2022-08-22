@@ -15,6 +15,7 @@ const addToListHandler = (e) => {
         userInputs[i].value = "";
     }
     addToWishlist(userInputsArr[0], userInputsArr[1], userInputsArr[2], userInputsArr[3]);
+    changeWishlistTitle();
 }
 
 const addToWishlist = (name, location, photo, description) => {
@@ -38,9 +39,9 @@ const addToWishlist = (name, location, photo, description) => {
     photo.length < 1 ? listItemPhoto.setAttribute("src", defaultPhoto) : listItemPhoto.setAttribute("src", photo);
 
     // Append the created children to list item information container
+    listItemInfoContainer.append(listItemPhoto);
     listItemInfoContainer.append(listItemName);
     listItemInfoContainer.append(listItemLocation);
-    listItemInfoContainer.append(listItemPhoto);
     if (description.length > 0) {
         listItemDescription = document.createElement("p");
         listItemDescription.innerText = description;
@@ -51,11 +52,13 @@ const addToWishlist = (name, location, photo, description) => {
     let listItemButtonsContainer = document.createElement("div");
 
     // Create edit & remove buttons
-    let editButton = document.createElement("button")
+    let editButton = document.createElement("button");
     editButton.innerText = "Edit";
+    editButton.setAttribute("class", "edit-btn");
     editButton.addEventListener("click", editButtonHandler);
     let removeButton = document.createElement("button")
     removeButton.innerText = "Remove";
+    removeButton.setAttribute("class", "remove-btn");
     removeButton.addEventListener("click", removeButtonHandler);
 
     // Append edit & remove buttons to the created buttons container
@@ -86,6 +89,11 @@ const editButtonHandler = (e) => {
 const removeButtonHandler = (e) => {
     const listItemContainer = e.target.parentElement.parentElement;
     listItemContainer.remove();
+}
+
+const changeWishlistTitle = () => {
+    wishlistTitle = document.querySelector("#wishlist-title");
+    wishlistTitle.innerText = "My Wishlist"
 }
 
 init();

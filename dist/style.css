@@ -2,6 +2,10 @@
     margin: 0;
 }
 
+button {
+    border-radius: 0.3rem;
+}
+
 
 /* Header */
 
@@ -43,10 +47,13 @@
 .user-input-box {
     height: 2rem;
     width: 80%;
+    border-width: 0.1rem;
+    border-radius: 0.3rem;
 }
 
 textarea {
     resize: vertical;
+    border-radius: 0.3rem;
 }
 
 .submit-btn {
@@ -71,6 +78,7 @@ textarea {
 
 #wishlist-container {
     display: flex;
+    flex-wrap: wrap;
 }
 
 .list-item-container {
@@ -79,11 +87,18 @@ textarea {
     flex-direction: column;
     text-align: left;
     border: 1px;
-    min-width: 33%;
-    max-width: 33%;
 }
 
 .list-item-image {
     max-height: 10rem;
     max-width: 10rem;
+}
+
+.edit-btn {
+    background-color: yellow;
+}
+
+.remove-btn {
+    color: #fff;
+    background-color: red;
 }
