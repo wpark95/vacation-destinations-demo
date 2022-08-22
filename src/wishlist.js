@@ -20,24 +20,24 @@ const addToListHandler = (e) => {
 
 const addToWishlist = (name, location, photo, description) => {
     // Create container for each wichlist item
-    let listItemContainer = document.createElement("div");
+    const listItemContainer = document.createElement("div");
     listItemContainer.setAttribute("class", "list-item-container");
 
     // Create container for wishlist item information
-    let listItemInfoContainer = document.createElement("div");
+    const listItemInfoContainer = document.createElement("div");
 
     // Create children for wishlist item information (destination name, location, photo) to list item information container (listItemInfoContainer)
-    let listItemName = document.createElement("p");
+    const listItemName = document.createElement("p");
     listItemName.setAttribute("class", "list-item-name");
     listItemName.innerText = name;
 
-    let listItemLocation = document.createElement("p");
+    const listItemLocation = document.createElement("p");
     listItemLocation.setAttribute("class", "list-item-location");
     listItemLocation.innerText = location;
 
-    let listItemPhoto = document.createElement("img");
+    const listItemPhoto = document.createElement("img");
     listItemPhoto.setAttribute("class", "list-item-image")
-    let defaultPhoto = "https://misstourist.com/wp-content/uploads/2021/03/0-best-airbnb-aruba.jpg";
+    const defaultPhoto = "https://misstourist.com/wp-content/uploads/2021/03/0-best-airbnb-aruba.jpg";
     photo.length > 0 ? listItemPhoto.setAttribute("src", photo) : listItemPhoto.setAttribute("src", defaultPhoto);
 
     // Append the created children to list item information container
@@ -52,15 +52,15 @@ const addToWishlist = (name, location, photo, description) => {
     }
 
     // Create container for edit & remove buttons
-    let listItemButtonsContainer = document.createElement("div");
+    const listItemButtonsContainer = document.createElement("div");
     listItemButtonsContainer.setAttribute("class", "btn-container");
 
     // Create edit & remove buttons
-    let editButton = document.createElement("button");
+    const editButton = document.createElement("button");
     editButton.innerText = "Edit";
     editButton.setAttribute("class", "edit-btn");
     editButton.addEventListener("click", editButtonHandler);
-    let removeButton = document.createElement("button")
+    const removeButton = document.createElement("button")
     removeButton.innerText = "Remove";
     removeButton.setAttribute("class", "remove-btn");
     removeButton.addEventListener("click", removeButtonHandler);

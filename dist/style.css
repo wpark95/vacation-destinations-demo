@@ -82,11 +82,14 @@ textarea {
 }
 
 .list-item-container {
-    padding: 3rem;
+    margin: 2rem;
     display: flex;
     flex-direction: column;
     text-align: left;
     border: 1px;
+    border-color: black;
+    border-style: solid;
+    border-radius: 0.3rem;
 }
 
 .list-item-name {
@@ -103,13 +106,14 @@ textarea {
 }
 
 .list-item-image {
-    max-height: 10rem;
-    max-width: 10rem;
+    max-height: 18rem;
+    max-width: 18rem;
 }
 
 .btn-container {
     display: flex;
     justify-content: space-between;
+    padding: 0.3rem;
 }
 
 .edit-btn {
