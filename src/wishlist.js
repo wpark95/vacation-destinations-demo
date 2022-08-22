@@ -76,9 +76,9 @@ const addToWishlist = (name, location, photo, description) => {
 
 const editButtonHandler = (e) => {
     listItemContainer = e.target.parentElement.parentElement;
-    const name = listItemContainer.querySelector("h3");
-    const location = listItemContainer.querySelector("h5");
-    const photo = listItemContainer.querySelector("img");
+    const name = listItemContainer.querySelector(".list-item-name");
+    const location = listItemContainer.querySelector(".list-item-location");
+    const photo = listItemContainer.querySelector(".list-item-image");
 
     const newName = window.prompt("Enter new name");
     const newLocation = window.prompt("Enter new location");
