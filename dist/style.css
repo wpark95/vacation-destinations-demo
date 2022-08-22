@@ -1,0 +1,89 @@
+* {
+    margin: 0;
+}
+
+
+/* Header */
+
+
+#header {
+    background-color: rgb(229, 235, 239);
+}
+
+#header-text-container {
+    text-align: center;
+    padding-top: 5%;
+    padding-bottom: 5%;
+}
+
+#main-header {
+    margin-bottom: 1%;
+}
+
+
+/* Body */
+
+/* User Input Form */
+
+#body-container {
+    display: flex;
+    justify-content: center;
+}
+
+#user-input-form {
+    padding-left: 10%;
+    flex-basis: 33.3%;
+    max-width: 33.3%;
+}
+
+.user-input {
+    margin-top: 5%;
+}
+
+.user-input-box {
+    height: 2rem;
+    width: 80%;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.submit-btn {
+    background-color: rgb(35, 35, 188);
+    color: #fff;
+    height: 3rem;
+    width: 80%;
+}
+
+
+/* Wishlist */
+
+
+#wishlist {
+    text-align: center;
+    flex-basis: 66.6%;
+}
+
+#wishlist-title {
+    padding-top: 2%;
+}
+
+#wishlist-container {
+    display: flex;
+}
+
+.list-item-container {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    border: 1px;
+    min-width: 33%;
+    max-width: 33%;
+}
+
+.list-item-image {
+    max-height: 10rem;
+    max-width: 10rem;
+}
