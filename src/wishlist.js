@@ -27,16 +27,18 @@ const addToWishlist = (name, location, photo, description) => {
     let listItemInfoContainer = document.createElement("div");
 
     // Create children for wishlist item information (destination name, location, photo) to list item information container (listItemInfoContainer)
-    let listItemName = document.createElement("h3");
+    let listItemName = document.createElement("p");
+    listItemName.setAttribute("class", "list-item-name");
     listItemName.innerText = name;
 
-    let listItemLocation = document.createElement("h5");
+    let listItemLocation = document.createElement("p");
+    listItemLocation.setAttribute("class", "list-item-location");
     listItemLocation.innerText = location;
 
     let listItemPhoto = document.createElement("img");
     listItemPhoto.setAttribute("class", "list-item-image")
     let defaultPhoto = "https://misstourist.com/wp-content/uploads/2021/03/0-best-airbnb-aruba.jpg";
-    photo.length < 1 ? listItemPhoto.setAttribute("src", defaultPhoto) : listItemPhoto.setAttribute("src", photo);
+    photo.length > 0 ? listItemPhoto.setAttribute("src", photo) : listItemPhoto.setAttribute("src", defaultPhoto);
 
     // Append the created children to list item information container
     listItemInfoContainer.append(listItemPhoto);
@@ -45,6 +47,7 @@ const addToWishlist = (name, location, photo, description) => {
     if (description.length > 0) {
         listItemDescription = document.createElement("p");
         listItemDescription.innerText = description;
+        listItemDescription.setAttribute("class", "list-item-description");
         listItemInfoContainer.append(listItemDescription);
     }
 
@@ -79,11 +82,11 @@ const editButtonHandler = (e) => {
 
     const newName = window.prompt("Enter new name");
     const newLocation = window.prompt("Enter new location");
-    const newPhoto = window.prompt("Enter new photo url");
+    const newPhotoUrl = window.prompt("Enter new photo url");
     
     newName.length < 1 ? null : name.innerText = newName;
     newLocation.length < 1 ? null : location.innerText = newLocation;
-    newPhoto.length < 1 ? null : photo.setAttribute("src", newPhoto);
+    newPhoto.length < 1 ? null : photo.setAttribute("src", newPhotoUrl);
 }
 
 const removeButtonHandler = (e) => {
