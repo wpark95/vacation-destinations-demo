@@ -92,6 +92,10 @@ textarea {
     border-radius: 0.3rem;
 }
 
+.list-item-info-container {
+    padding: 0.5rem;
+}
+
 .list-item-name {
     font-size: larger;
     font-weight: bolder;
@@ -113,7 +117,7 @@ textarea {
 .btn-container {
     display: flex;
     justify-content: space-between;
-    padding: 0.3rem;
+    padding: 0.5rem;
 }
 
 .edit-btn {

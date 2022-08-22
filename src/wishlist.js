@@ -25,8 +25,15 @@ const addToWishlist = (name, location, photo, description) => {
 
     // Create container for wishlist item information
     const listItemInfoContainer = document.createElement("div");
+    listItemInfoContainer.setAttribute("class", "list-item-info-container");
 
-    // Create children for wishlist item information (destination name, location, photo) to list item information container (listItemInfoContainer)
+    // Create Image element for list item container. If not provided, use default image
+    const listItemPhoto = document.createElement("img");
+    listItemPhoto.setAttribute("class", "list-item-image")
+    const defaultPhoto = "https://misstourist.com/wp-content/uploads/2021/03/0-best-airbnb-aruba.jpg";
+    photo.length > 0 ? listItemPhoto.setAttribute("src", photo) : listItemPhoto.setAttribute("src", defaultPhoto);
+
+    // Create children for wishlist item information (i.e., destination name, location, and description if provided) for list item information container
     const listItemName = document.createElement("p");
     listItemName.setAttribute("class", "list-item-name");
     listItemName.innerText = name;
@@ -35,13 +42,7 @@ const addToWishlist = (name, location, photo, description) => {
     listItemLocation.setAttribute("class", "list-item-location");
     listItemLocation.innerText = location;
 
-    const listItemPhoto = document.createElement("img");
-    listItemPhoto.setAttribute("class", "list-item-image")
-    const defaultPhoto = "https://misstourist.com/wp-content/uploads/2021/03/0-best-airbnb-aruba.jpg";
-    photo.length > 0 ? listItemPhoto.setAttribute("src", photo) : listItemPhoto.setAttribute("src", defaultPhoto);
-
-    // Append the created children to list item information container
-    listItemInfoContainer.append(listItemPhoto);
+    // Append name, location, and description (if provided) to list item information container
     listItemInfoContainer.append(listItemName);
     listItemInfoContainer.append(listItemLocation);
     if (description.length > 0) {
@@ -56,19 +57,14 @@ const addToWishlist = (name, location, photo, description) => {
     listItemButtonsContainer.setAttribute("class", "btn-container");
 
     // Create edit & remove buttons
-    const editButton = document.createElement("button");
-    editButton.innerText = "Edit";
-    editButton.setAttribute("class", "edit-btn");
-    editButton.addEventListener("click", editButtonHandler);
-    const removeButton = document.createElement("button")
-    removeButton.innerText = "Remove";
-    removeButton.setAttribute("class", "remove-btn");
-    removeButton.addEventListener("click", removeButtonHandler);
+    const editButton = createEditOrRemoveButton("Edit");
+    const removeButton = createEditOrRemoveButton("Remove");
 
     // Append edit & remove buttons to the created buttons container
     listItemButtonsContainer.append(editButton);
     listItemButtonsContainer.append(removeButton);
     
+    listItemContainer.append(listItemPhoto);
     listItemContainer.append(listItemInfoContainer);
     listItemContainer.append(listItemButtonsContainer);
 
@@ -98,6 +94,15 @@ const removeButtonHandler = (e) => {
 const changeWishlistTitle = () => {
     wishlistTitle = document.querySelector("#wishlist-title");
     wishlistTitle.innerText = "My Wishlist"
+}
+
+const createEditOrRemoveButton = (buttonType) => {
+    const buttonClassName = buttonType.toLowerCase() + "-btn";
+    const button = document.createElement("button");
+    button.innerText = buttonType;
+    button.setAttribute("class", buttonClassName);
+    buttonType === "Edit" ? button.addEventListener("click", editButtonHandler) : button.addEventListener("click", removeButtonHandler);
+    return button;
 }
 
 init();
