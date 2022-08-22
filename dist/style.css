@@ -89,9 +89,27 @@ textarea {
     border: 1px;
 }
 
+.list-item-name {
+    font-size: larger;
+    font-weight: bolder;
+}
+
+.list-item-location {
+    color: lightslategrey;
+}
+
+.list-item-description {
+    padding-top: 0.7rem;
+}
+
 .list-item-image {
     max-height: 10rem;
     max-width: 10rem;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: space-between;
 }
 
 .edit-btn {

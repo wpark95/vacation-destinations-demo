@@ -53,6 +53,7 @@ const addToWishlist = (name, location, photo, description) => {
 
     // Create container for edit & remove buttons
     let listItemButtonsContainer = document.createElement("div");
+    listItemButtonsContainer.setAttribute("class", "btn-container");
 
     // Create edit & remove buttons
     let editButton = document.createElement("button");
