@@ -84,9 +84,9 @@ const editButtonHandler = (e) => {
     const newLocation = window.prompt("Enter new location");
     const newPhotoUrl = window.prompt("Enter new photo url");
     
-    newName.length < 1 ? null : name.innerText = newName;
-    newLocation.length < 1 ? null : location.innerText = newLocation;
-    newPhoto.length < 1 ? null : photo.setAttribute("src", newPhotoUrl);
+    newName.length > 0 ? name.innerText = newName : null;
+    newLocation.length > 0 ? location.innerText = newLocation : null;
+    newPhotoUrl.length > 0 ? photo.setAttribute("src", newPhotoUrl) : null;
 }
 
 const removeButtonHandler = (e) => {
