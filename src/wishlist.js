@@ -30,7 +30,7 @@ const addToWishlist = (name, location, photoUrl, description) => {
     // Create Image element for list item container. If not provided, use default image
     const listItemPhoto = document.createElement("img");
     listItemPhoto.setAttribute("class", "list-item-image")
-    const defaultPhotoUrl = "https://misstourist.com/wp-content/uploads/2021/03/0-best-airbnb-aruba.jpg";
+    const defaultPhotoUrl = "https://cdn.vox-cdn.com/thumbor/9j-s_MPUfWM4bWdZfPqxBxGkvlw=/1400x1050/filters:format(jpeg)/cdn.vox-cdn.com/uploads/chorus_asset/file/22312759/rickroll_4k.jpg";
     photoUrl.length > 0 ? listItemPhoto.setAttribute("src", photoUrl) : listItemPhoto.setAttribute("src", defaultPhotoUrl);
 
     // Create children for wishlist item information (i.e., destination name, location, and description if provided) for list item information container
