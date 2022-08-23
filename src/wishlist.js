@@ -97,7 +97,7 @@ const changeWishlistTitle = () => {
     wishlistTitle.innerText = "My Wishlist"
 }
 
-const createEditOrRemoveButton = buttonType => {
+const createEditOrRemoveButton = (buttonType) => {
     const buttonClassName = buttonType.toLowerCase() + "-btn";
     const button = document.createElement("button");
     button.innerText = buttonType;

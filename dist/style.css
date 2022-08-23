@@ -94,6 +94,7 @@ textarea {
 
 .list-item-info-container {
     padding: 0.5rem;
+    justify-content: space-between;
 }
 
 .list-item-name {
