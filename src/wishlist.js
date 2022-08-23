@@ -60,7 +60,6 @@ const addToWishlist = (name, location, photoUrl, description) => {
     listItemPhoto.setAttribute("class", "list-item-image")
     const defaultPhotoUrl = "https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif";
     photoUrl.length > 0 ? listItemPhoto.setAttribute("src", photoUrl) : listItemPhoto.setAttribute("src", defaultPhotoUrl);
-    console.log(photoUrl.match(/\w+\.(jpg|jpeg|gif|png|tiff|bmp)$/gi));
 
     // Create children for wishlist item information (i.e., destination name, location, and description if provided) for list item information container
     const listItemName = document.createElement("p");
