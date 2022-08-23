@@ -18,7 +18,7 @@ const addToListHandler = (e) => {
     changeWishlistTitle();
 }
 
-const addToWishlist = (name, location, photo, description) => {
+const addToWishlist = (name, location, photoUrl, description) => {
     // Create container for each wichlist item
     const listItemContainer = document.createElement("div");
     listItemContainer.setAttribute("class", "list-item-container");
@@ -30,8 +30,8 @@ const addToWishlist = (name, location, photo, description) => {
     // Create Image element for list item container. If not provided, use default image
     const listItemPhoto = document.createElement("img");
     listItemPhoto.setAttribute("class", "list-item-image")
-    const defaultPhoto = "https://misstourist.com/wp-content/uploads/2021/03/0-best-airbnb-aruba.jpg";
-    photo.length > 0 ? listItemPhoto.setAttribute("src", photo) : listItemPhoto.setAttribute("src", defaultPhoto);
+    const defaultPhotoUrl = "https://misstourist.com/wp-content/uploads/2021/03/0-best-airbnb-aruba.jpg";
+    photoUrl.length > 0 ? listItemPhoto.setAttribute("src", photoUrl) : listItemPhoto.setAttribute("src", defaultPhotoUrl);
 
     // Create children for wishlist item information (i.e., destination name, location, and description if provided) for list item information container
     const listItemName = document.createElement("p");
@@ -91,17 +91,18 @@ const removeButtonHandler = (e) => {
     listItemContainer.remove();
 }
 
+// Helper Functions
 const changeWishlistTitle = () => {
     wishlistTitle = document.querySelector("#wishlist-title");
     wishlistTitle.innerText = "My Wishlist"
 }
 
-const createEditOrRemoveButton = (buttonType) => {
+const createEditOrRemoveButton = buttonType => {
     const buttonClassName = buttonType.toLowerCase() + "-btn";
     const button = document.createElement("button");
     button.innerText = buttonType;
     button.setAttribute("class", buttonClassName);
-    buttonType === "Edit" ? button.addEventListener("click", editButtonHandler) : button.addEventListener("click", removeButtonHandler);
+    buttonType === "Edit" ? button.addEventListener("click", editButtonHandler) : buttonType === "Remove" ? button.addEventListener("click", removeButtonHandler) : null;
     return button;
 }
 
