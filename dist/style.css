@@ -49,6 +49,7 @@ button {
     width: 80%;
     border-width: 0.1rem;
     border-radius: 0.3rem;
+    margin-top: 0.5rem;
 }
 
 textarea {
