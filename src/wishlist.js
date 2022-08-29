@@ -22,16 +22,18 @@ const addToListHandler = (e) => {
 
 // Prompts the user to enter new name, location, and photo of their wishlist item that they want to edit. 
 // Uses original values if user omits new values. Otherwise, sets newly provided values to the item
-const editButtonHandler = (e) => {
+const editButtonHandler = async (e) => {
     listItemContainer = e.target.parentElement.parentElement;
     const name = listItemContainer.querySelector(".list-item-name");
     const location = listItemContainer.querySelector(".list-item-location");
+    const image = listItemContainer.querySelector(".list-item-image");
 
     const newName = window.prompt("Enter new name");
     const newLocation = window.prompt("Enter new location");
     
-    newName.length > 0 ? name.innerText = newName : null;
-    newLocation.length > 0 ? location.innerText = newLocation : null;
+    newName.length ? name.innerText = newName : null;
+    newLocation.length ? location.innerText = newLocation : null;
+    newName.length || newLocation.length ? image.setAttribute("src", await getImageUrl(newName, newLocation)) : null;
 }
 
 // Removes the target wishlist item when user clicks the remove button
@@ -43,7 +45,7 @@ const removeButtonHandler = (e) => {
 /* 
 Helper Functions
 */
-const addToWishlist = (name, location, description) => {
+const addToWishlist = async (name, location, description) => {
     // Create container for each wichlist item
     const listItemContainer = document.createElement("div");
     listItemContainer.setAttribute("class", "list-item-container");
@@ -52,11 +54,10 @@ const addToWishlist = (name, location, description) => {
     const listItemInfoContainer = document.createElement("div");
     listItemInfoContainer.setAttribute("class", "list-item-info-container");
 
-    // Create Image element for list item container. If not provided, use default image
+    // Create Image element for list item container.
     const listItemPhoto = document.createElement("img");
-    listItemPhoto.setAttribute("class", "list-item-image")
-    const defaultPhotoUrl = "https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif";
-    listItemPhoto.setAttribute("src", defaultPhotoUrl);
+    listItemPhoto.setAttribute("class", "list-item-image");
+    listItemPhoto.setAttribute("src", await getImageUrl(name, location));
 
     // Create children for wishlist item information (i.e., destination name, location, and description if provided) for list item information container
     const listItemName = document.createElement("p");
@@ -94,6 +95,22 @@ const addToWishlist = (name, location, description) => {
     listItemContainer.append(listItemButtonsContainer);
 
     wishlist.append(listItemContainer);
+}
+
+// Create an image element for a wishlist item. 
+// Automatically use a photo that matches user-provided name & location. If a matching photo cannot be found, use a default image.
+const getImageUrl = async (destination, location) => {
+    const destinationLocation = destination + " " + location;
+    const url = `https://api.unsplash.com/search/photos/?client_id=${keys.accessKey}&query=${destinationLocation}`;
+    let imageUrl = "https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif";
+
+    try {
+        const queryResult = await fetch(url).then(res => res.json());
+        imageUrl = queryResult.results[0].urls.small;
+    } catch(err) {
+        console.error(err);
+    }
+    return imageUrl;
 }
 
 // Updates wishlist title to become "My Wishlist!" when user adds an item to the wishlist
