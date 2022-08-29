@@ -121,6 +121,9 @@ const getImageUrl = async (destination, location) => {
         firstResultUrl.length ? imageUrl = firstResultUrl : null;
     } catch(err) {
         console.error(err);
+        alert(`We encountered an error trying to search for a relevant image for your destination.\n
+        So, instead of staring at a boring error icon image, please admire Rick Astley in the meantime.\n
+        If you edit your destination information, we will try our best to find a relevant image again.`);
     } finally {
         return imageUrl;
     }
@@ -138,7 +141,11 @@ const createEditOrRemoveButton = (buttonType) => {
     const button = document.createElement("button");
     button.innerText = buttonType;
     button.setAttribute("class", buttonClassName);
-    buttonType === "Edit" ? button.addEventListener("click", editButtonHandler) : buttonType === "Remove" ? button.addEventListener("click", removeButtonHandler) : null;
+    buttonType === "Edit"  
+        ? button.addEventListener("click", editButtonHandler)
+        : buttonType === "Remove" 
+            ? button.addEventListener("click", removeButtonHandler) 
+            : null;
     return button;
 }
 
