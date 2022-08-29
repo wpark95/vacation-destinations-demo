@@ -16,7 +16,7 @@ const addToListHandler = (e) => {
         userInputs[i].value = "";
     }
 
-    addToWishlist(userInputsArr[0], userInputsArr[1], userInputsArr[2], userInputsArr[3]);
+    addToWishlist(userInputsArr[0], userInputsArr[1], userInputsArr[2]);
     changeWishlistTitle();
 }
 
@@ -26,15 +26,12 @@ const editButtonHandler = (e) => {
     listItemContainer = e.target.parentElement.parentElement;
     const name = listItemContainer.querySelector(".list-item-name");
     const location = listItemContainer.querySelector(".list-item-location");
-    const photo = listItemContainer.querySelector(".list-item-image");
 
     const newName = window.prompt("Enter new name");
     const newLocation = window.prompt("Enter new location");
-    const newPhotoUrl = window.prompt("Enter new photo url");
     
     newName.length > 0 ? name.innerText = newName : null;
     newLocation.length > 0 ? location.innerText = newLocation : null;
-    newPhotoUrl.length > 0 ? photo.setAttribute("src", newPhotoUrl) : null;
 }
 
 // Removes the target wishlist item when user clicks the remove button
@@ -46,7 +43,7 @@ const removeButtonHandler = (e) => {
 /* 
 Helper Functions
 */
-const addToWishlist = (name, location, photoUrl, description) => {
+const addToWishlist = (name, location, description) => {
     // Create container for each wichlist item
     const listItemContainer = document.createElement("div");
     listItemContainer.setAttribute("class", "list-item-container");
@@ -59,7 +56,7 @@ const addToWishlist = (name, location, photoUrl, description) => {
     const listItemPhoto = document.createElement("img");
     listItemPhoto.setAttribute("class", "list-item-image")
     const defaultPhotoUrl = "https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif";
-    photoUrl.length > 0 ? listItemPhoto.setAttribute("src", photoUrl) : listItemPhoto.setAttribute("src", defaultPhotoUrl);
+    listItemPhoto.setAttribute("src", defaultPhotoUrl);
 
     // Create children for wishlist item information (i.e., destination name, location, and description if provided) for list item information container
     const listItemName = document.createElement("p");
