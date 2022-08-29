@@ -1,39 +1,45 @@
 const userInputForm = document.querySelector("form");
-const userInputs = userInputForm.querySelectorAll(".user-input-box");
 const wishlist = document.querySelector("#wishlist-container");
 
 const init = () => {
     userInputForm.addEventListener("submit", addToListHandler);
 }
 
-// Handles the submission of user inputs (e.g., name, location, photo).
+// Handles the submission of user inputs when Add To List button is clicked
+// (currently expecting destination name, location, and description)
 const addToListHandler = (e) => {
     e.preventDefault();
-    const userInputsArr = [];
+    const expectedFields = ["name", "location", "description"];
+    const providedInputs = {};
 
-    for (i = 0; i < userInputs.length; i++) {
-        userInputsArr.push(userInputs[i].value);
-        userInputs[i].value = "";
+    for (i = 0; i < expectedFields.length; i++) {
+        const currElementId = `#dest-${expectedFields[i]}`;
+        const currElement = userInputForm.querySelector(currElementId);
+        
+        providedInputs[expectedFields[i]] = currElement.value;
+        currElement.value = "";
     }
 
-    addToWishlist(userInputsArr[0], userInputsArr[1], userInputsArr[2]);
+    addToWishlist(providedInputs);
     changeWishlistTitle();
 }
 
-// Prompts the user to enter new name, location, and photo of their wishlist item that they want to edit. 
-// Uses original values if user omits new values. Otherwise, sets newly provided values to the item
+// Prompts the user to enter new name, location, and photo of the wishlist item that they want to edit. 
+// Uses original values if the user omits new values. Otherwise, sets newly provided values to the item
 const editButtonHandler = async (e) => {
     listItemContainer = e.target.parentElement.parentElement;
-    const name = listItemContainer.querySelector(".list-item-name");
-    const location = listItemContainer.querySelector(".list-item-location");
-    const image = listItemContainer.querySelector(".list-item-image");
+    const destName = listItemContainer.querySelector(".list-item-name");
+    const destLocation = listItemContainer.querySelector(".list-item-location");
+    const destImage = listItemContainer.querySelector(".list-item-image");
 
-    const newName = window.prompt("Enter new name");
-    const newLocation = window.prompt("Enter new location");
+    const newDestName = window.prompt("Enter new name");
+    const newDestLocation = window.prompt("Enter new location");
     
-    newName.length ? name.innerText = newName : null;
-    newLocation.length ? location.innerText = newLocation : null;
-    newName.length || newLocation.length ? image.setAttribute("src", await getImageUrl(newName, newLocation)) : null;
+    newDestName.length ? destName.innerText = newDestName : null;
+    newDestLocation.length ? destLocation.innerText = newDestLocation : null;
+    (newDestName.length || newDestLocation.length) 
+        ? destImage.setAttribute("src", await getImageUrl(newDestName, newDestLocation)) 
+        : null;
 }
 
 // Removes the target wishlist item when user clicks the remove button
@@ -45,7 +51,9 @@ const removeButtonHandler = (e) => {
 /* 
 Helper Functions
 */
-const addToWishlist = async (name, location, description) => {
+const addToWishlist = async (userInputs) => {
+    const { name, location, description } = userInputs;
+
     // Create container for each wichlist item
     const listItemContainer = document.createElement("div");
     listItemContainer.setAttribute("class", "list-item-container");
@@ -54,12 +62,12 @@ const addToWishlist = async (name, location, description) => {
     const listItemInfoContainer = document.createElement("div");
     listItemInfoContainer.setAttribute("class", "list-item-info-container");
 
-    // Create Image element for list item container.
-    const listItemPhoto = document.createElement("img");
-    listItemPhoto.setAttribute("class", "list-item-image");
-    listItemPhoto.setAttribute("src", await getImageUrl(name, location));
+    // Create Image element for the list item.
+    const listItemImage = document.createElement("img");
+    listItemImage.setAttribute("class", "list-item-image");
+    listItemImage.setAttribute("src", await getImageUrl(name, location));
 
-    // Create children for wishlist item information (i.e., destination name, location, and description if provided) for list item information container
+    // Create destination name and location elements for the list item
     const listItemName = document.createElement("p");
     listItemName.setAttribute("class", "list-item-name");
     listItemName.innerText = name;
@@ -68,7 +76,8 @@ const addToWishlist = async (name, location, description) => {
     listItemLocation.setAttribute("class", "list-item-location");
     listItemLocation.innerText = location;
 
-    // Append name, location, and description (if provided) to list item information container
+    // Append destinatnion name and location the to list item container.
+    // Create & append destination description as well, if user provided description.
     listItemInfoContainer.append(listItemName);
     listItemInfoContainer.append(listItemLocation);
     if (description.length > 0) {
@@ -90,27 +99,31 @@ const addToWishlist = async (name, location, description) => {
     listItemButtonsContainer.append(editButton);
     listItemButtonsContainer.append(removeButton);
     
-    listItemContainer.append(listItemPhoto);
+    // Append the created image, user-provided information, and edit/remove buttons to the list item container.
+    listItemContainer.append(listItemImage);
     listItemContainer.append(listItemInfoContainer);
     listItemContainer.append(listItemButtonsContainer);
 
+    // Finally, append the list item container to wishlist.
     wishlist.append(listItemContainer);
 }
 
-// Create an image element for a wishlist item. 
-// Automatically use a photo that matches user-provided name & location. If a matching photo cannot be found, use a default image.
+// Generates an image url for a wishlist item. 
+// Automatically uses a photo that matches user-provided name & location. 
+// If a matching photo cannot be found, uses a default image.
 const getImageUrl = async (destination, location) => {
-    const destinationLocation = destination + " " + location;
-    const url = `https://api.unsplash.com/search/photos/?client_id=${keys.accessKey}&query=${destinationLocation}`;
+    const url = `https://api.unsplash.com/search/photos/?client_id=${keys.accessKey}&query=${destination} ${location}`;
     let imageUrl = "https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif";
 
     try {
-        const queryResult = await fetch(url).then(res => res.json());
-        imageUrl = queryResult.results[0].urls.small;
+        const queryResults = await fetch(url).then(res => res.json());
+        const firstResultUrl = queryResults.results[0].urls.small;
+        firstResultUrl.length ? imageUrl = firstResultUrl : null;
     } catch(err) {
         console.error(err);
+    } finally {
+        return imageUrl;
     }
-    return imageUrl;
 }
 
 // Updates wishlist title to become "My Wishlist!" when user adds an item to the wishlist
