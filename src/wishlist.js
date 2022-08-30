@@ -117,13 +117,15 @@ const getImageUrl = async (destination, location) => {
 
     try {
         const queryResults = await fetch(url).then(res => res.json());
-        const firstResultUrl = queryResults.results[0].urls.small;
+        const rand = Math.floor(Math.random() * queryResults.results.length);
+        const firstResultUrl = queryResults.results[rand].urls.small;
         firstResultUrl.length ? imageUrl = firstResultUrl : null;
     } catch(err) {
         console.error(err);
         alert(`We encountered an error trying to search for a relevant image for your destination.\n
         If you edit your destination information, we will try our best to find a relevant image again.\n
-        If you decide to edit your destination, please try to use a more widely-used name for destination name and/or location\n
+        If you decide to edit your destination, please try to use a more widely-used name for destination name 
+        and/or location\n
         And instead of staring at a boring error icon, please feel free to admire Rick Astley in the meantime.`);
     } finally {
         return imageUrl;
