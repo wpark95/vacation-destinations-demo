@@ -22,7 +22,8 @@ const formSubmitHandler = async (e) => {
 
     try {
         await getImageUrl('post', destinationInfo.name, destinationInfo.location)
-            .then(({ url }) => {
+            .then(({ id, url }) => {
+                destinationInfo.dbId = id;
                 destinationInfo.imageUrl = url;
             });
     } catch(error) {
@@ -35,53 +36,14 @@ const formSubmitHandler = async (e) => {
     }
 };
 
-// Prompts the user to enter new name, location, and photo of the wishlist item that they want to edit. 
-// Uses original values if the user omits new values. Otherwise, sets newly provided values to the item
-const editButtonHandler = async (e) => {
-    listItemContainer = e.target.parentElement.parentElement;
-    const destName = listItemContainer.querySelector('.list-item-name');
-    const destLocation = listItemContainer.querySelector('.list-item-location');
-    const destImage = listItemContainer.querySelector('.list-item-image');
-
-    const newDestName = window.prompt('Enter new name');
-    const newDestLocation = window.prompt('Enter new location');
-    
-    newDestName.length ? destName.innerText = newDestName : null;
-    newDestLocation.length ? destLocation.innerText = newDestLocation : null;
-    if (newDestName.length || newDestLocation.length) {
-        let imageUrl;
-
-        try {
-            await getImageUrl('put', newDestName, newDestLocation)
-                .then(({ url }) => {
-                    imageUrl = url;
-                });
-        } catch(error) {
-            console.error(error);
-            // Display an alert for the user.
-            displayErrorMessage();
-        } finally {
-            destImage.setAttribute('src', imageUrl);
-        }
-    }
-}
-
-// Removes the target wishlist item when user clicks the remove button
-const removeButtonHandler = (e) => {
-    const listItemContainer = e.target.parentElement.parentElement;
-    listItemContainer.remove();
-}
-
-/* 
-Helper Functions
-*/
 const addToWishList = (userInputs) => {
-    const { name, location, description, imageUrl } = userInputs;
+    const { dbId, name, location, description, imageUrl } = userInputs;
     const wishlist = document.querySelector('#wishlist-container');
 
     // Create container for each wichlist item
     const listItemContainer = document.createElement('div');
     listItemContainer.setAttribute('class', 'list-item-container');
+    listItemContainer.setAttribute('id', dbId);
 
     // Create container for wishlist item information
     const listItemInfoContainer = document.createElement('div');
@@ -133,13 +95,61 @@ const addToWishList = (userInputs) => {
     wishlist.append(listItemContainer);
 }
 
-const getImageUrl = async (method, name, location) => (
+// Prompts the user to enter new name, location, and photo of the wishlist item that they want to edit. 
+// Uses original values if the user omits new values. Otherwise, sets newly provided values to the item
+const editButtonHandler = async (e) => {
+    listItemContainer = e.target.parentElement.parentElement;
+    const destId = listItemContainer.getAttribute('id');
+    const destName = listItemContainer.querySelector('.list-item-name');
+    const destLocation = listItemContainer.querySelector('.list-item-location');
+    const destImage = listItemContainer.querySelector('.list-item-image');
+
+    const newDestName = window.prompt('Enter new name');
+    const newDestLocation = window.prompt('Enter new location');
+    
+    newDestName.length ? destName.innerText = newDestName : null;
+    newDestLocation.length ? destLocation.innerText = newDestLocation : null;
+    if (newDestName.length || newDestLocation.length) {
+        let imageUrl;
+
+        try {
+            await getImageUrl('put', newDestName, newDestLocation, destId)
+                .then(({ url }) => {
+                    imageUrl = url;
+                });
+        } catch(error) {
+            console.error(error);
+            // Display an alert for the user.
+            displayErrorMessage();
+        } finally {
+            destImage.setAttribute('src', imageUrl);
+        }
+    }
+}
+
+// Removes the target wishlist item when user clicks the remove button
+const removeButtonHandler = (e) => {
+    const listItemContainer = e.target.parentElement.parentElement;
+    listItemContainer.remove();
+}
+
+// Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
+const changeWishlistTitle = () => {
+    wishlistTitle = document.querySelector('#wishlist-title');
+    wishlistTitle.innerText = 'My Wishlist'
+};
+
+/*
+    Helper Functions
+*/
+const getImageUrl = async (method, name, location, id) => (
     await fetch('/wishlist', {
         method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             name: name,
-            location: location
+            location: location,
+            id: id,
         })
     })
         .then(res => res.json())
@@ -150,12 +160,6 @@ const displayErrorMessage = () => {
     If you edit your destination information, we will try our best to find a relevant image again.\n
     If you decide to edit your destination information, please try to use a more commonly used name for destination name and/or location.\n
     And instead of staring at a boring error icon, please feel free to admire the legendary Rick Astley in the meantime.`);
-};
-
-// Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
-const changeWishlistTitle = () => {
-    wishlistTitle = document.querySelector('#wishlist-title');
-    wishlistTitle.innerText = 'My Wishlist'
 };
 
 // Creates an edit or remove button used for each item in the wishlist

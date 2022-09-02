@@ -4,6 +4,7 @@ const https = require('https');
 const bodyParser = require('body-parser');
 // const MongoClient = require('mongodb').MongoClient;
 const { MongoConnection } = require('../db/mongodb');
+const { ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const app = express();
@@ -18,52 +19,52 @@ MongoConnection.openConnection();
 
 app.post('/wishlist', async (req, res) => {
     const { name, location } = req.body;
-    let imageUrl;
+    const info = {};
 
     await getImageUrl(name, location)
         .then((url) => {
-            imageUrl = url;
-
-            res.status(200).send({
-                url: url,
-                error: null,
-            });
+            info.url = url;
+            res.status(200);
         })
         .catch((error) => {
-            res.status(500).send({
-                url: defaultImgUrl,
-                error: error,
-            });
+            info.url = defaultImgUrl;
+            info.error = error;
+            res.status(500);
         });
 
-    updateDb('post', name, location, imageUrl);
-
-    return res;
+    await updateDb('post', name, location, info.url)
+        .then(({ insertedId }) => {
+            info.id = insertedId.toString();
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    res.send(info);
 });
 
 app.put('/wishlist', async (req, res) => {
-    const { name, location } = req.body;
-    let imageUrl;
+    const { name, location, id } = req.body;
+    const info = {};
 
     await getImageUrl(name, location)
         .then((url) => {
-            imageUrl = url;
-
-            res.status(200).send({
-                url: url,
-                error: null,
-            });
+            info.url = url;
+            res.status(200);
         })
         .catch((error) => {
-            res.status(500).send({
-                url: defaultImgUrl,
-                error: error,
-            });
+            info.url = defaultImgUrl;
+            info.error = error;
+            res.status(500);
         });
 
-    updateDb('put', name, location, imageUrl);
-
-    return res;
+    await updateDb('put', name, location, info.url, id)
+        .then((res) => {
+            console.log(res);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    res.send(info);
 });
 
 // Generates an image url for a wishlist item. 
@@ -97,26 +98,26 @@ const getImageUrl = (name, location) => {
     });
 };
 
-const updateDb = (method, name, location, imageUrl) => {
+const updateDb = async (method, name, location, imageUrl, id) => {
     const mongoCollection = MongoConnection.db.collection('wishlist');
 
     if (method === 'post') {
-        mongoCollection.insertOne(
+        return await mongoCollection.insertOne(
             {
                 name: name,
                 location: location,
                 image: imageUrl,
             })
             .then((result) => {
-                console.log(result);
+                return result;
             })
             .catch((error) => {
-                console.error(error);
-            })
+                return error;
+            });
     };
     if (method === 'put') {
-        mongoCollection.findOneAndUpdate(
-            { name: name },
+        return await mongoCollection.findOneAndUpdate(
+            { _id: new ObjectId(id) },
             {
               $set: {
                 name: name,
@@ -127,6 +128,12 @@ const updateDb = (method, name, location, imageUrl) => {
             {
               upsert: true
             })
+            .then((result) => {
+                return result;
+            })
+            .catch((error) => {
+                return error;
+            });
     };
 
 };
