@@ -22,7 +22,6 @@ app.post('/wishlist', async (req, res) => {
     await getImageUrl(name, location)
         .then((url) => {
             info.url = url;
-            res.status(200);
         })
         .catch((error) => {
             info.url = defaultImgUrl;
@@ -33,9 +32,11 @@ app.post('/wishlist', async (req, res) => {
     await addDestination(name, location, info.url)
         .then(({ insertedId }) => {
             info.id = insertedId.toString();
+            res.status(200);
         })
         .catch((error) => {
-            console.log(error);
+            info.error = error;
+            res.status(500);
         })
     res.send(info);
 });
@@ -47,7 +48,6 @@ app.put('/wishlist', async (req, res) => {
     await getImageUrl(name, location)
         .then((url) => {
             info.url = url;
-            res.status(200);
         })
         .catch((error) => {
             info.url = defaultImgUrl;
@@ -56,13 +56,30 @@ app.put('/wishlist', async (req, res) => {
         });
 
     await editDestination(name, location, info.url, id)
-        .then((res) => {
-            // console.log(res);
+        .then((result) => {
+            console.log('MongoDB edit operation successful');
+            res.status(200);
+        })
+        .catch((error) => {
+            info.error = error;
+            res.status(500);
+        })
+    res.send(info);
+});
+
+app.delete('/wishlist', async (req, res) => {
+    const { id } = req.body;
+
+    await deleteDestination(id)
+        .then((result) => {
+            console.log('MongoDB delete operation successful');
+            res.status(200);
         })
         .catch((error) => {
             console.log(error);
+            res.status(500);
         })
-    res.send(info);
+    res.send();
 });
 
 // Generates an image url for a wishlist item. 
@@ -136,6 +153,20 @@ const editDestination = async (name, location, imageUrl, id) => {
                 return error;
             });
 };
+
+const deleteDestination = async (id) => {
+    const mongoCollection = MongoConnection.db.collection('wishlist');
+
+    return await mongoCollection.deleteOne(
+        { _id: new ObjectId(id) }
+    )
+        .then((result) => {
+            return result;
+        })
+        .catch((error) => {
+            return error;
+        })
+}
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}.`);

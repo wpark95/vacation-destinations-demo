@@ -27,8 +27,7 @@ const formSubmitHandler = async (e) => {
                 destinationInfo.imageUrl = url;
             });
     } catch(error) {
-        console.error(error);
-        displayErrorMessage();
+        displayErrorMessage(error);
     } finally {
         addToWishList(destinationInfo);
         changeWishlistTitle();
@@ -97,7 +96,7 @@ const addToWishList = (userInputs) => {
 // Prompts the user to enter new name, location, and photo of the wishlist item that they want to edit. 
 // Uses original values if the user omits new values. Otherwise, sets newly provided values to the item
 const editButtonHandler = async (e) => {
-    listItemContainer = e.target.parentElement.parentElement;
+    const listItemContainer = e.target.parentElement.parentElement;
     const destId = listItemContainer.getAttribute('id');
     const destName = listItemContainer.querySelector('.list-item-name');
     const destLocation = listItemContainer.querySelector('.list-item-location');
@@ -108,27 +107,40 @@ const editButtonHandler = async (e) => {
     
     if (newDestName.length) {
         destName.innerText = newDestName;
-    }
+    };
     if (newDestLocation.length) {
         destLocation.innerText = newDestLocation;
-    }
+    };
     if (newDestName.length || newDestLocation.length) {
         await getImageUrl('put', destName.innerText, destLocation.innerText, destId)
             .then(({ url }) => {
                 destImage.setAttribute('src', url);
             })
             .catch((error) => {
-                console.error(error);
-                displayErrorMessage();
+                displayErrorMessage(error);
             })
-    }
-}
+    };
+};
 
 // Removes the target wishlist item when user clicks the remove button
-const removeButtonHandler = (e) => {
+const removeButtonHandler = async (e) => {
     const listItemContainer = e.target.parentElement.parentElement;
-    listItemContainer.remove();
-}
+    const destId = listItemContainer.getAttribute('id');
+
+    await fetch('/wishlist', {
+        method: 'delete',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            id: destId,
+        })
+    })
+        .then(() => {
+            listItemContainer.remove();
+        })
+        .catch((error) => {
+            displayErrorMessage(error);
+        });
+};
 
 // Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
 const changeWishlistTitle = () => {
@@ -149,10 +161,11 @@ const getImageUrl = async (method, name, location, id) => (
             id: id,
         })
     })
-        .then(res => res.json())
+        .then((res) => res.json())
 );
 
-const displayErrorMessage = () => {
+const displayErrorMessage = (error) => {
+    console.error(error);
     // TODO: Create a modal and display error message to user.
 };
 
