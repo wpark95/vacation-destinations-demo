@@ -1,5 +1,4 @@
 const userInputForm = document.querySelector('#form');
-const defaultImageUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
 
 const init = () => {
     userInputForm.addEventListener('submit', formSubmitHandler);
@@ -9,7 +8,8 @@ const init = () => {
 // (currently expecting destination name, location, and description)
 const formSubmitHandler = async (e) => {
     e.preventDefault();
-    const expectedFields = ['name', 'location', 'description']; // Update this array when changing input fields
+    // Update the array below when changing input fields
+    const expectedFields = ['name', 'location', 'description']; 
     const destinationInfo = {};
 
     for (i = 0; i < expectedFields.length; i++) {
@@ -22,13 +22,11 @@ const formSubmitHandler = async (e) => {
 
     try {
         await getImageUrl('post', destinationInfo.name, destinationInfo.location)
-            .then((url) => {
+            .then(({ url }) => {
                 destinationInfo.imageUrl = url;
             });
     } catch(error) {
         console.error(error);
-        // If the fetch fails, use default image url.
-        destinationInfo.imageUrl = defaultImageUrl; 
         // Display an alert for the user.
         displayErrorMessage();
     } finally {
@@ -55,13 +53,11 @@ const editButtonHandler = async (e) => {
 
         try {
             await getImageUrl('put', newDestName, newDestLocation)
-                .then((url) => {
+                .then(({ url }) => {
                     imageUrl = url;
                 });
         } catch(error) {
             console.error(error);
-            // If the fetch fails, use default image url.
-            imageUrl = defaultImageUrl; 
             // Display an alert for the user.
             displayErrorMessage();
         } finally {
@@ -147,16 +143,13 @@ const getImageUrl = async (method, name, location) => (
         })
     })
         .then(res => res.json())
-        .then(({ url }) => {
-            return url;
-        })
 );
 
 const displayErrorMessage = () => {
     alert(`We encountered an error trying to search for a relevant image for your destination.\n
     If you edit your destination information, we will try our best to find a relevant image again.\n
-    If you decide to edit your destination, please try to use a more widely-used name for destination name and/or location.\n
-    And instead of staring at a boring error icon, please feel free to admire Rick Astley in the meantime.`);
+    If you decide to edit your destination information, please try to use a more commonly used name for destination name and/or location.\n
+    And instead of staring at a boring error icon, please feel free to admire the legendary Rick Astley in the meantime.`);
 };
 
 // Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
