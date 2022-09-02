@@ -167,10 +167,11 @@ const changeWishlistTitle = () => {
 
 // Creates an edit or remove button used for each item in the wishlist
 const createEditOrRemoveButton = (buttonType) => {
-    const buttonClassName = buttonType.toLowerCase() + "-btn";
+    const buttonId = buttonType.toLowerCase() + "-btn";
     const button = document.createElement("button");
     button.innerText = buttonType;
-    button.setAttribute("class", buttonClassName);
+    button.setAttribute("class", "card-button");
+    button.setAttribute("id", buttonId);
     buttonType === "Edit"  
         ? button.addEventListener("click", editButtonHandler)
         : buttonType === "Remove" 
