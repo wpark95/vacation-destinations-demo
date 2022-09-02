@@ -3,7 +3,7 @@ const defaultImageUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
 
 const init = () => {
     userInputForm.addEventListener('submit', formSubmitHandler);
-}
+};
 
 // Handles the submission of user inputs when Add To List button is clicked
 // (currently expecting destination name, location, and description)
@@ -21,32 +21,21 @@ const formSubmitHandler = async (e) => {
     }
 
     try {
-        await fetch('/wishlist', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                name: destinationInfo.name,
-                location: destinationInfo.location
-            }),
-        })
-            .then(res => res.json())
-            .then(({ url }) => {
+        await getImageUrl('post', destinationInfo.name, destinationInfo.location)
+            .then((url) => {
                 destinationInfo.imageUrl = url;
-            })
+            });
     } catch(error) {
         console.error(error);
         // If the fetch fails, use default image url.
         destinationInfo.imageUrl = defaultImageUrl; 
         // Display an alert for the user.
-        alert(`We encountered an error trying to search for a relevant image for your destination.\n
-        If you edit your destination information, we will try our best to find a relevant image again.\n
-        If you decide to edit your destination, please try to use a more widely-used name for destination name and/or location.\n
-        And instead of staring at a boring error icon, please feel free to admire Rick Astley in the meantime.`);
+        displayErrorMessage();
     } finally {
         addToWishList(destinationInfo);
         changeWishlistTitle();
     }
-}
+};
 
 // Prompts the user to enter new name, location, and photo of the wishlist item that they want to edit. 
 // Uses original values if the user omits new values. Otherwise, sets newly provided values to the item
@@ -65,27 +54,16 @@ const editButtonHandler = async (e) => {
         let imageUrl;
 
         try {
-            await fetch('/wishlist', {
-                method: 'put',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: newDestName,
-                    location: newDestLocation
-                }),
-            })
-                .then(res => res.json())
-                .then(({ url }) => {
+            await getImageUrl('put', newDestName, newDestLocation)
+                .then((url) => {
                     imageUrl = url;
-                })
+                });
         } catch(error) {
             console.error(error);
             // If the fetch fails, use default image url.
             imageUrl = defaultImageUrl; 
             // Display an alert for the user.
-            alert(`We encountered an error trying to search for a relevant image for your destination.\n
-            If you edit your destination information, we will try our best to find a relevant image again.\n
-            If you decide to edit your destination, please try to use a more widely-used name for destination name and/or location.\n
-            And instead of staring at a boring error icon, please feel free to admire Rick Astley in the meantime.`);
+            displayErrorMessage();
         } finally {
             destImage.setAttribute('src', imageUrl);
         }
@@ -159,11 +137,33 @@ const addToWishList = (userInputs) => {
     wishlist.append(listItemContainer);
 }
 
+const getImageUrl = async (method, name, location) => (
+    await fetch('/wishlist', {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: name,
+            location: location
+        })
+    })
+        .then(res => res.json())
+        .then(({ url }) => {
+            return url;
+        })
+);
+
+const displayErrorMessage = () => {
+    alert(`We encountered an error trying to search for a relevant image for your destination.\n
+    If you edit your destination information, we will try our best to find a relevant image again.\n
+    If you decide to edit your destination, please try to use a more widely-used name for destination name and/or location.\n
+    And instead of staring at a boring error icon, please feel free to admire Rick Astley in the meantime.`);
+};
+
 // Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
 const changeWishlistTitle = () => {
     wishlistTitle = document.querySelector('#wishlist-title');
     wishlistTitle.innerText = 'My Wishlist'
-}
+};
 
 // Creates an edit or remove button used for each item in the wishlist
 const createEditOrRemoveButton = (buttonType) => {
@@ -178,6 +178,6 @@ const createEditOrRemoveButton = (buttonType) => {
             ? button.addEventListener('click', removeButtonHandler) 
             : null;
     return button;
-}
+};
 
 init();
