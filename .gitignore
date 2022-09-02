@@ -1,1 +1,3 @@
-image-auth.js
+/node_modules
+
+*.env

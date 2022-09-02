@@ -1,0 +1,26 @@
+{
+  "name": "vacation-destinations-demo",
+  "version": "1.0.0",
+  "description": "Vacation Destination Wishlist",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./server/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wpark95/vacation-destinations-demo.git"
+  },
+  "author": "Will Park",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wpark95/vacation-destinations-demo/issues"
+  },
+  "homepage": "https://github.com/wpark95/vacation-destinations-demo#readme",
+  "dependencies": {
+    "dotenv": "^16.0.2",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  }
+}
