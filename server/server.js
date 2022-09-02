@@ -37,7 +37,7 @@ app.post('/wishlist', async (req, res) => {
         .catch((error) => {
             info.error = error;
             res.status(500);
-        })
+        });
     res.send(info);
 });
 
@@ -63,7 +63,7 @@ app.put('/wishlist', async (req, res) => {
         .catch((error) => {
             info.error = error;
             res.status(500);
-        })
+        });
     res.send(info);
 });
 
@@ -78,13 +78,11 @@ app.delete('/wishlist', async (req, res) => {
         .catch((error) => {
             console.log(error);
             res.status(500);
-        })
+        });
     res.send();
 });
 
 // Generates an image url for a wishlist item. 
-// Automatically uses a photo that matches user-provided name & location. 
-// If a matching photo cannot be found, uses a default image.
 const getImageUrl = (name, location) => {
     const unsplashUrl = 'https://api.unsplash.com/search/photos/';
     const query = `?client_id=${process.env.ACCESS_KEY}&query=${name.toLowerCase()} ${location.toLowerCase()}`;
@@ -137,10 +135,11 @@ const editDestination = async (name, location, imageUrl, id) => {
     return await mongoCollection.findOneAndUpdate(
         { _id: new ObjectId(id) },
         {
-            $set: {
-            name: name,
-            location: location,
-            image: imageUrl,
+            $set: 
+            {
+                name: name,
+                location: location,
+                image: imageUrl,
             }
         },
         {
@@ -165,7 +164,7 @@ const deleteDestination = async (id) => {
         })
         .catch((error) => {
             return error;
-        })
+        });
 }
 
 app.listen(port, () => {
