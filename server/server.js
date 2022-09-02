@@ -2,7 +2,6 @@ const path = require('path');
 const express = require('express');
 const https = require('https');
 const bodyParser = require('body-parser');
-// const MongoClient = require('mongodb').MongoClient;
 const { MongoConnection } = require('../db/mongodb');
 const { ObjectId } = require('mongodb');
 require('dotenv').config();
@@ -11,11 +10,10 @@ const app = express();
 const port = process.env.PORT || 3000;
 const clientPath = path.join(__dirname, '..', 'client');
 const defaultImgUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
+MongoConnection.openConnection();
 
 app.use(bodyParser.json());
 app.use('/', express.static(clientPath));
-
-MongoConnection.openConnection();
 
 app.post('/wishlist', async (req, res) => {
     const { name, location } = req.body;
@@ -32,7 +30,7 @@ app.post('/wishlist', async (req, res) => {
             res.status(500);
         });
 
-    await updateDb('post', name, location, info.url)
+    await addDestination(name, location, info.url)
         .then(({ insertedId }) => {
             info.id = insertedId.toString();
         })
@@ -57,9 +55,9 @@ app.put('/wishlist', async (req, res) => {
             res.status(500);
         });
 
-    await updateDb('put', name, location, info.url, id)
+    await editDestination(name, location, info.url, id)
         .then((res) => {
-            console.log(res);
+            // console.log(res);
         })
         .catch((error) => {
             console.log(error);
@@ -98,44 +96,45 @@ const getImageUrl = (name, location) => {
     });
 };
 
-const updateDb = async (method, name, location, imageUrl, id) => {
+
+const addDestination = async (name, location, imageUrl) => {
     const mongoCollection = MongoConnection.db.collection('wishlist');
 
-    if (method === 'post') {
-        return await mongoCollection.insertOne(
-            {
-                name: name,
-                location: location,
-                image: imageUrl,
-            })
+    return await mongoCollection.insertOne(
+        {
+            name: name,
+            location: location,
+            image: imageUrl,
+        })
             .then((result) => {
                 return result;
             })
             .catch((error) => {
                 return error;
             });
-    };
-    if (method === 'put') {
-        return await mongoCollection.findOneAndUpdate(
-            { _id: new ObjectId(id) },
-            {
-              $set: {
-                name: name,
-                location: location,
-                image: imageUrl,
-              }
-            },
-            {
-              upsert: true
-            })
-            .then((result) => {
-                return result;
-            })
-            .catch((error) => {
-                return error;
-            });
-    };
+};
 
+const editDestination = async (name, location, imageUrl, id) => {
+    const mongoCollection = MongoConnection.db.collection('wishlist');
+
+    return await mongoCollection.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        {
+            $set: {
+            name: name,
+            location: location,
+            image: imageUrl,
+            }
+        },
+        {
+            upsert: true
+        })
+            .then((result) => {
+                return result;
+            })
+            .catch((error) => {
+                return error;
+            });
 };
 
 app.listen(port, () => {

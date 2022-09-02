@@ -28,7 +28,6 @@ const formSubmitHandler = async (e) => {
             });
     } catch(error) {
         console.error(error);
-        // Display an alert for the user.
         displayErrorMessage();
     } finally {
         addToWishList(destinationInfo);
@@ -107,23 +106,21 @@ const editButtonHandler = async (e) => {
     const newDestName = window.prompt('Enter new name');
     const newDestLocation = window.prompt('Enter new location');
     
-    newDestName.length ? destName.innerText = newDestName : null;
-    newDestLocation.length ? destLocation.innerText = newDestLocation : null;
+    if (newDestName.length) {
+        destName.innerText = newDestName;
+    }
+    if (newDestLocation.length) {
+        destLocation.innerText = newDestLocation;
+    }
     if (newDestName.length || newDestLocation.length) {
-        let imageUrl;
-
-        try {
-            await getImageUrl('put', newDestName, newDestLocation, destId)
-                .then(({ url }) => {
-                    imageUrl = url;
-                });
-        } catch(error) {
-            console.error(error);
-            // Display an alert for the user.
-            displayErrorMessage();
-        } finally {
-            destImage.setAttribute('src', imageUrl);
-        }
+        await getImageUrl('put', destName.innerText, destLocation.innerText, destId)
+            .then(({ url }) => {
+                destImage.setAttribute('src', url);
+            })
+            .catch((error) => {
+                console.error(error);
+                displayErrorMessage();
+            })
     }
 }
 
@@ -156,10 +153,7 @@ const getImageUrl = async (method, name, location, id) => (
 );
 
 const displayErrorMessage = () => {
-    alert(`We encountered an error trying to search for a relevant image for your destination.\n
-    If you edit your destination information, we will try our best to find a relevant image again.\n
-    If you decide to edit your destination information, please try to use a more commonly used name for destination name and/or location.\n
-    And instead of staring at a boring error icon, please feel free to admire the legendary Rick Astley in the meantime.`);
+    // TODO: Create a modal and display error message to user.
 };
 
 // Creates an edit or remove button used for each item in the wishlist
