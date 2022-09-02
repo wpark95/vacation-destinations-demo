@@ -31,6 +31,7 @@ app.post('/wishlist', async (req, res) => {
 
     await addDestination(name, location, info.url)
         .then(({ insertedId }) => {
+            console.log('MongoDB add operation successful');
             info.id = insertedId.toString();
             res.status(200);
         })
@@ -98,9 +99,11 @@ const getImageUrl = (name, location) => {
                 try {
                     const results = JSON.parse(data).results;
                     const rand = Math.floor(Math.random() * results.length);
-                    rand && results[rand].urls.small.length 
-                        ? resolve(results[rand].urls.small)
-                        : reject('URL length is 0 (invalid)');
+                    if (rand && results[rand].urls.small.length) {
+                        resolve(results[rand].urls.small)
+                    } else { 
+                        reject('URL length is 0 (invalid)');
+                    }
                 } catch(error) {
                     reject(error);
                 }
