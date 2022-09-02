@@ -1,15 +1,15 @@
-const userInputForm = document.getElementById("form");
+const userInputForm = document.getElementById('form');
 const defaultImageUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
 
 const init = () => {
-    userInputForm.addEventListener("submit", formSubmitHandler);
+    userInputForm.addEventListener('submit', formSubmitHandler);
 }
 
 // Handles the submission of user inputs when Add To List button is clicked
 // (currently expecting destination name, location, and description)
 const formSubmitHandler = async (e) => {
     e.preventDefault();
-    const expectedFields = ["name", "location", "description"];
+    const expectedFields = ['name', 'location', 'description'];
     const destinationInfo = {};
 
     for (i = 0; i < expectedFields.length; i++) {
@@ -17,7 +17,7 @@ const formSubmitHandler = async (e) => {
         const currElement = userInputForm.querySelector(currElementId);
         
         destinationInfo[expectedFields[i]] = currElement.value;
-        currElement.value = "";
+        currElement.value = '';
     }
 
     try {
@@ -52,12 +52,12 @@ const formSubmitHandler = async (e) => {
 // Uses original values if the user omits new values. Otherwise, sets newly provided values to the item
 const editButtonHandler = async (e) => {
     listItemContainer = e.target.parentElement.parentElement;
-    const destName = listItemContainer.querySelector(".list-item-name");
-    const destLocation = listItemContainer.querySelector(".list-item-location");
-    const destImage = listItemContainer.querySelector(".list-item-image");
+    const destName = listItemContainer.querySelector('.list-item-name');
+    const destLocation = listItemContainer.querySelector('.list-item-location');
+    const destImage = listItemContainer.querySelector('.list-item-image');
 
-    const newDestName = window.prompt("Enter new name");
-    const newDestLocation = window.prompt("Enter new location");
+    const newDestName = window.prompt('Enter new name');
+    const newDestLocation = window.prompt('Enter new location');
     
     newDestName.length ? destName.innerText = newDestName : null;
     newDestLocation.length ? destLocation.innerText = newDestLocation : null;
@@ -103,28 +103,28 @@ Helper Functions
 */
 const addToWishList = (userInputs) => {
     const { name, location, description, imageUrl } = userInputs;
-    const wishlist = document.getElementById("wishlist-container");
+    const wishlist = document.getElementById('wishlist-container');
 
     // Create container for each wichlist item
-    const listItemContainer = document.createElement("div");
-    listItemContainer.setAttribute("class", "list-item-container");
+    const listItemContainer = document.createElement('div');
+    listItemContainer.setAttribute('class', 'list-item-container');
 
     // Create container for wishlist item information
-    const listItemInfoContainer = document.createElement("div");
-    listItemInfoContainer.setAttribute("class", "list-item-info-container");
+    const listItemInfoContainer = document.createElement('div');
+    listItemInfoContainer.setAttribute('class', 'list-item-info-container');
 
     // Create Image element for the list item.
-    const listItemImage = document.createElement("img");
-    listItemImage.setAttribute("class", "list-item-image");
-    listItemImage.setAttribute("src", imageUrl);        
+    const listItemImage = document.createElement('img');
+    listItemImage.setAttribute('class', 'list-item-image');
+    listItemImage.setAttribute('src', imageUrl);        
 
     // Create destination name and location elements for the list item
-    const listItemName = document.createElement("p");
-    listItemName.setAttribute("class", "list-item-name");
+    const listItemName = document.createElement('p');
+    listItemName.setAttribute('class', 'list-item-name');
     listItemName.innerText = name;
 
-    const listItemLocation = document.createElement("p");
-    listItemLocation.setAttribute("class", "list-item-location");
+    const listItemLocation = document.createElement('p');
+    listItemLocation.setAttribute('class', 'list-item-location');
     listItemLocation.innerText = location;
 
     // Append destinatnion name and location the to list item container.
@@ -132,19 +132,19 @@ const addToWishList = (userInputs) => {
     listItemInfoContainer.append(listItemName);
     listItemInfoContainer.append(listItemLocation);
     if (description.length > 0) {
-        listItemDescription = document.createElement("p");
+        listItemDescription = document.createElement('p');
         listItemDescription.innerText = description;
-        listItemDescription.setAttribute("class", "list-item-description");
+        listItemDescription.setAttribute('class', 'list-item-description');
         listItemInfoContainer.append(listItemDescription);
     }
 
     // Create container for edit & remove buttons
-    const listItemButtonsContainer = document.createElement("div");
-    listItemButtonsContainer.setAttribute("class", "btn-container");
+    const listItemButtonsContainer = document.createElement('div');
+    listItemButtonsContainer.setAttribute('class', 'btn-container');
 
     // Create edit & remove buttons
-    const editButton = createEditOrRemoveButton("Edit");
-    const removeButton = createEditOrRemoveButton("Remove");
+    const editButton = createEditOrRemoveButton('Edit');
+    const removeButton = createEditOrRemoveButton('Remove');
 
     // Append edit & remove buttons to the created buttons container
     listItemButtonsContainer.append(editButton);
@@ -159,23 +159,23 @@ const addToWishList = (userInputs) => {
     wishlist.append(listItemContainer);
 }
 
-// Updates wishlist title to become "My Wishlist!" when user adds an item to the wishlist
+// Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
 const changeWishlistTitle = () => {
-    wishlistTitle = document.getElementById("wishlist-title");
-    wishlistTitle.innerText = "My Wishlist"
+    wishlistTitle = document.getElementById('wishlist-title');
+    wishlistTitle.innerText = 'My Wishlist'
 }
 
 // Creates an edit or remove button used for each item in the wishlist
 const createEditOrRemoveButton = (buttonType) => {
-    const buttonId = buttonType.toLowerCase() + "-btn";
-    const button = document.createElement("button");
+    const buttonId = buttonType.toLowerCase() + '-btn';
+    const button = document.createElement('button');
     button.innerText = buttonType;
-    button.setAttribute("class", "card-button");
-    button.setAttribute("id", buttonId);
-    buttonType === "Edit"  
-        ? button.addEventListener("click", editButtonHandler)
-        : buttonType === "Remove" 
-            ? button.addEventListener("click", removeButtonHandler) 
+    button.setAttribute('class', 'card-button');
+    button.setAttribute('id', buttonId);
+    buttonType === 'Edit'  
+        ? button.addEventListener('click', editButtonHandler)
+        : buttonType === 'Remove' 
+            ? button.addEventListener('click', removeButtonHandler) 
             : null;
     return button;
 }
