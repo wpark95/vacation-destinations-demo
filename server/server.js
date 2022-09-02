@@ -11,7 +11,7 @@ const client = path.join(__dirname, '..', 'client');
 app.use(bodyParser.json());
 app.use('/', express.static(client));
 
-app.post('/destinations', async (req, res) => {
+app.post('/wishlist', async (req, res) => {
     const { name, location } = req.body;
 
     await getImageUrl(name, location)
@@ -25,7 +25,7 @@ app.post('/destinations', async (req, res) => {
         });
 });
 
-app.put('/destinations', async (req, res) => {
+app.put('/wishlist', async (req, res) => {
     const { name, location } = req.body;
 
     await getImageUrl(name, location)

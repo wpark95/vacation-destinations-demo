@@ -1,4 +1,4 @@
-const userInputForm = document.getElementById('form');
+const userInputForm = document.querySelector('#form');
 const defaultImageUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
 
 const init = () => {
@@ -9,11 +9,11 @@ const init = () => {
 // (currently expecting destination name, location, and description)
 const formSubmitHandler = async (e) => {
     e.preventDefault();
-    const expectedFields = ['name', 'location', 'description'];
+    const expectedFields = ['name', 'location', 'description']; // Update this array when changing input fields
     const destinationInfo = {};
 
     for (i = 0; i < expectedFields.length; i++) {
-        const currElementId = `#dest-${expectedFields[i]}`;
+        const currElementId = '#dest-' + expectedFields[i];
         const currElement = userInputForm.querySelector(currElementId);
         
         destinationInfo[expectedFields[i]] = currElement.value;
@@ -21,7 +21,7 @@ const formSubmitHandler = async (e) => {
     }
 
     try {
-        await fetch('/destinations', {
+        await fetch('/wishlist', {
             method: 'post',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -65,7 +65,7 @@ const editButtonHandler = async (e) => {
         let imageUrl;
 
         try {
-            await fetch('/destinations', {
+            await fetch('/wishlist', {
                 method: 'put',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -103,7 +103,7 @@ Helper Functions
 */
 const addToWishList = (userInputs) => {
     const { name, location, description, imageUrl } = userInputs;
-    const wishlist = document.getElementById('wishlist-container');
+    const wishlist = document.querySelector('#wishlist-container');
 
     // Create container for each wichlist item
     const listItemContainer = document.createElement('div');
@@ -161,7 +161,7 @@ const addToWishList = (userInputs) => {
 
 // Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
 const changeWishlistTitle = () => {
-    wishlistTitle = document.getElementById('wishlist-title');
+    wishlistTitle = document.querySelector('#wishlist-title');
     wishlistTitle.innerText = 'My Wishlist'
 }
 
