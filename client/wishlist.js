@@ -91,7 +91,7 @@ const addToWishList = (userInputs) => {
 
     // Finally, append the list item container to wishlist.
     wishlist.append(listItemContainer);
-}
+};
 
 // Prompts the user to enter new name, location, and photo of the wishlist item that they want to edit. 
 // Uses original values if the user omits new values. Otherwise, sets newly provided values to the item
@@ -107,10 +107,10 @@ const editButtonHandler = async (e) => {
     
     if (newDestName.length) {
         destName.innerText = newDestName;
-    };
+    }
     if (newDestLocation.length) {
         destLocation.innerText = newDestLocation;
-    };
+    }
     if (newDestName.length || newDestLocation.length) {
         await getImageUrl('put', destName.innerText, destLocation.innerText, destId)
             .then(({ url }) => {
@@ -118,8 +118,8 @@ const editButtonHandler = async (e) => {
             })
             .catch((error) => {
                 displayErrorMessage(error);
-            })
-    };
+            });
+    }
 };
 
 // Removes the target wishlist item when user clicks the remove button
@@ -145,7 +145,7 @@ const removeButtonHandler = async (e) => {
 // Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
 const changeWishlistTitle = () => {
     wishlistTitle = document.querySelector('#wishlist-title');
-    wishlistTitle.innerText = 'My Wishlist'
+    wishlistTitle.innerText = 'My Wishlist';
 };
 
 /*
@@ -176,11 +176,12 @@ const createEditOrRemoveButton = (buttonType) => {
     button.innerText = buttonType;
     button.setAttribute('class', 'card-button');
     button.setAttribute('id', buttonId);
-    buttonType === 'Edit'  
-        ? button.addEventListener('click', editButtonHandler)
-        : buttonType === 'Remove' 
-            ? button.addEventListener('click', removeButtonHandler) 
-            : null;
+    if (buttonType === 'Edit') {
+        button.addEventListener('click', editButtonHandler);
+    }
+    if (buttonType === 'Remove') {
+        button.addEventListener('click', removeButtonHandler) 
+    }
     return button;
 };
 
