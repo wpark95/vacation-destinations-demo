@@ -15,6 +15,18 @@ MongoConnection.openConnection();
 app.use(bodyParser.json());
 app.use('/', express.static(clientPath));
 
+app.get('/wishlist', async (req, res) => {
+    const wishlist = await MongoConnection.db.collection('wishlist');
+    await wishlist.find().toArray()
+        .then((data) => {
+            res.status(200);
+            res.send(data);
+        })
+        .catch((error) => {
+            res.sendStatus(400);
+        })
+});
+
 app.post('/wishlist', async (req, res) => {
     const { name, location, description } = req.body;
     const info = {};
@@ -119,10 +131,16 @@ const getImageUrl = (name, location) => {
     });
 };
 
-const addDestination = async (name, location, description, imageUrl) => {
-    const mongoCollection = MongoConnection.db.collection('wishlist');
+const getAllDestinations = async () => {
+    const wishlist = await MongoConnection.db.collection('wishlist');
+    
+    return await wishlist.find().toArray();
+};
 
-    return await mongoCollection.insertOne(
+const addDestination = async (name, location, description, imageUrl) => {
+    const wishlist = MongoConnection.db.collection('wishlist');
+
+    return await wishlist.insertOne(
         {
             name: name,
             location: location,
@@ -138,9 +156,9 @@ const addDestination = async (name, location, description, imageUrl) => {
 };
 
 const editDestination = async (name, location, description, imageUrl, id) => {
-    const mongoCollection = MongoConnection.db.collection('wishlist');
+    const wishlist = MongoConnection.db.collection('wishlist');
 
-    return await mongoCollection.findOneAndUpdate(
+    return await wishlist.findOneAndUpdate(
         { _id: new ObjectId(id) },
         {
             $set: 
@@ -163,9 +181,9 @@ const editDestination = async (name, location, description, imageUrl, id) => {
 };
 
 const deleteDestination = async (id) => {
-    const mongoCollection = MongoConnection.db.collection('wishlist');
+    const wishlist = MongoConnection.db.collection('wishlist');
 
-    return await mongoCollection.deleteOne(
+    return await wishlist.deleteOne(
         { _id: new ObjectId(id) }
     )
         .then((result) => {

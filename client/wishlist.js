@@ -2,6 +2,7 @@ const userInputForm = document.querySelector('#form');
 
 const init = () => {
     userInputForm.addEventListener('submit', formSubmitHandler);
+    loadSavedDestinations();
 };
 
 // Handles the submission of user inputs when Add To List button is clicked
@@ -21,8 +22,8 @@ const formSubmitHandler = async (e) => {
     }
     await getImageUrl('post', destinationInfo.name, destinationInfo.location, destinationInfo.description)
         .then(({ id, url, imgFetchSuccessful }) => {
-            destinationInfo.dbId = id;
-            destinationInfo.imageUrl = url;
+            destinationInfo._id = id;
+            destinationInfo.image = url;
             if (!imgFetchSuccessful) {
                 displayErrorMessage('image');
             }
@@ -36,13 +37,14 @@ const formSubmitHandler = async (e) => {
 };
 
 const addToWishList = (userInputs) => {
-    const { dbId, name, location, description, imageUrl } = userInputs;
+    const { _id, name, location, description, image } = userInputs;
+    console.log(userInputs);
     const wishlist = document.querySelector('#wishlist-container');
 
     // Create container for each wichlist item
     const listItemContainer = document.createElement('div');
     listItemContainer.setAttribute('class', 'list-item-container');
-    listItemContainer.setAttribute('id', dbId);
+    listItemContainer.setAttribute('id', _id);
 
     // Create container for wishlist item information
     const listItemInfoContainer = document.createElement('div');
@@ -51,7 +53,7 @@ const addToWishList = (userInputs) => {
     // Create Image element for the list item.
     const listItemImage = document.createElement('img');
     listItemImage.setAttribute('class', 'list-item-image');
-    listItemImage.setAttribute('src', imageUrl);        
+    listItemImage.setAttribute('src', image);        
 
     // Create destination name and location elements for the list item
     const listItemName = document.createElement('p');
@@ -65,7 +67,7 @@ const addToWishList = (userInputs) => {
     // Create description for the list item (can be empty if user omitted description)
     listItemDescription = document.createElement('p');
     listItemDescription.setAttribute('class', 'list-item-description');
-    if (description.length > 0) {
+    if (description.length) {
         listItemDescription.innerText = description;
     }
 
@@ -150,6 +152,21 @@ const removeButtonHandler = async (e) => {
         .catch((err) => {
             displayErrorMessage('server');
         });
+};
+
+const loadSavedDestinations = async () => {
+    return await fetch('/wishlist')
+    .then((res) => (res.json()))
+    .then((data) => {
+        if (data.length) {
+            for (let i = 0; i < data.length; i++) {
+                addToWishList(data[i]);
+            }
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+    });
 };
 
 // Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
