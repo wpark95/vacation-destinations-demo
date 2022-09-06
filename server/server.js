@@ -17,6 +17,7 @@ app.use('/', express.static(clientPath));
 
 app.get('/wishlist', async (req, res) => {
     const wishlist = await MongoConnection.db.collection('wishlist');
+
     await wishlist.find().toArray()
         .then((data) => {
             res.status(200);
@@ -83,6 +84,7 @@ app.put('/wishlist', async (req, res) => {
             console.log(error);
             res.status(500);
         });
+
     res.send(info);
 });
 
@@ -98,6 +100,7 @@ app.delete('/wishlist', async (req, res) => {
             console.log(error);
             res.status(500);
         });
+        
     res.send();
 });
 
@@ -130,12 +133,6 @@ const getImageUrl = (name, location) => {
             reject(error);
         });
     });
-};
-
-const getAllDestinations = async () => {
-    const wishlist = await MongoConnection.db.collection('wishlist');
-    
-    return await wishlist.find().toArray();
 };
 
 const addDestination = async (name, location, description, imageUrl) => {
