@@ -74,8 +74,6 @@ const addToWishList = (userInputs) => {
     listItemInfoContainer.append(listItemLocation);
     listItemInfoContainer.append(listItemDescription);
 
-
-
     // Create container for edit & remove buttons
     const listItemButtonsContainer = document.createElement('div');
     listItemButtonsContainer.setAttribute('class', 'btn-container');
