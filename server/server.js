@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 app.use('/', express.static(clientPath));
 
 app.post('/wishlist', async (req, res) => {
-    const { name, location } = req.body;
+    const { name, location, description } = req.body;
     const info = {};
 
     await getImageUrl(name, location)
@@ -31,7 +31,7 @@ app.post('/wishlist', async (req, res) => {
             info.imgFetchSuccessful = false;
         });
 
-    await addDestination(name, location, info.url)
+    await addDestination(name, location, description, info.url)
         .then(({ insertedId }) => {
             console.log('MongoDB add operation successful');
             info.id = insertedId.toString();
@@ -46,7 +46,7 @@ app.post('/wishlist', async (req, res) => {
 });
 
 app.put('/wishlist', async (req, res) => {
-    const { name, location, id } = req.body;
+    const { name, location, description, id } = req.body;
     const info = {};
 
     await getImageUrl(name, location)
@@ -61,7 +61,7 @@ app.put('/wishlist', async (req, res) => {
             info.imgFetchSuccessful = false;
         });
 
-    await editDestination(name, location, info.url, id)
+    await editDestination(name, location, description, info.url, id)
         .then((result) => {
             console.log('MongoDB edit operation successful');
             res.status(200);
@@ -120,13 +120,14 @@ const getImageUrl = (name, location) => {
 };
 
 
-const addDestination = async (name, location, imageUrl) => {
+const addDestination = async (name, location, description, imageUrl) => {
     const mongoCollection = MongoConnection.db.collection('wishlist');
 
     return await mongoCollection.insertOne(
         {
             name: name,
             location: location,
+            description: description,
             image: imageUrl,
         })
             .then((result) => {
@@ -137,7 +138,7 @@ const addDestination = async (name, location, imageUrl) => {
             });
 };
 
-const editDestination = async (name, location, imageUrl, id) => {
+const editDestination = async (name, location, description, imageUrl, id) => {
     const mongoCollection = MongoConnection.db.collection('wishlist');
 
     return await mongoCollection.findOneAndUpdate(
@@ -147,6 +148,7 @@ const editDestination = async (name, location, imageUrl, id) => {
             {
                 name: name,
                 location: location,
+                description: description,  
                 image: imageUrl,
             }
         },

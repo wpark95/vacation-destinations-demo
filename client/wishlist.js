@@ -19,7 +19,7 @@ const formSubmitHandler = async (e) => {
         destinationInfo[expectedFields[i]] = currElement.value;
         currElement.value = '';
     }
-    await getImageUrl('post', destinationInfo.name, destinationInfo.location)
+    await getImageUrl('post', destinationInfo.name, destinationInfo.location, destinationInfo.description)
         .then(({ id, url, imgFetchSuccessful }) => {
             destinationInfo.dbId = id;
             destinationInfo.imageUrl = url;
@@ -62,16 +62,19 @@ const addToWishList = (userInputs) => {
     listItemLocation.setAttribute('class', 'list-item-location');
     listItemLocation.innerText = location;
 
-    // Append destinatnion name and location the to list item container.
-    // Create & append destination description as well, if user provided description.
+    // Create description for the list item (can be empty if user omitted description)
+    listItemDescription = document.createElement('p');
+    listItemDescription.setAttribute('class', 'list-item-description');
+    if (description.length > 0) {
+        listItemDescription.innerText = description;
+    }
+
+    // Append destinatnion name, location, and description the to list item container.
     listItemInfoContainer.append(listItemName);
     listItemInfoContainer.append(listItemLocation);
-    if (description.length > 0) {
-        listItemDescription = document.createElement('p');
-        listItemDescription.innerText = description;
-        listItemDescription.setAttribute('class', 'list-item-description');
-        listItemInfoContainer.append(listItemDescription);
-    }
+    listItemInfoContainer.append(listItemDescription);
+
+
 
     // Create container for edit & remove buttons
     const listItemButtonsContainer = document.createElement('div');
@@ -102,9 +105,11 @@ const editButtonHandler = async (e) => {
     const destName = listItemContainer.querySelector('.list-item-name');
     const destLocation = listItemContainer.querySelector('.list-item-location');
     const destImage = listItemContainer.querySelector('.list-item-image');
+    const destDescription = listItemContainer.querySelector('.list-item-description');
 
     const newDestName = window.prompt('Enter new name');
     const newDestLocation = window.prompt('Enter new location');
+    const newDescription = window.prompt('Enter new description');
     
     if (newDestName.length) {
         destName.innerText = newDestName;
@@ -112,8 +117,11 @@ const editButtonHandler = async (e) => {
     if (newDestLocation.length) {
         destLocation.innerText = newDestLocation;
     }
-    if (newDestName.length || newDestLocation.length) {
-        await getImageUrl('put', destName.innerText, destLocation.innerText, destId)
+    if (newDescription.length) {
+        destDescription.innerText = newDescription;
+    }
+    if (newDestName.length || newDestLocation.length || newDescription.length) {
+        await getImageUrl('put', destName.innerText, destLocation.innerText, destDescription.innerText, destId)
             .then(({ url, imgFetchSuccessful }) => {
                 destImage.setAttribute('src', url);
                 if (!imgFetchSuccessful) {
@@ -155,13 +163,14 @@ const changeWishlistTitle = () => {
 /*
     Helper Functions
 */
-const getImageUrl = async (method, name, location, id) => (
+const getImageUrl = async (method, name, location, description, id) => (
     await fetch('/wishlist', {
         method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
             name: name,
             location: location,
+            description: description,
             id: id,
         })
     })
