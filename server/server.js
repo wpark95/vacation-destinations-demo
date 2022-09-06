@@ -7,7 +7,7 @@ const { ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const app = express();
-const port = PORT || 3000;
+const port = process.env.PORT || 3000;
 const clientPath = path.join(__dirname, '..', 'client');
 const defaultImgUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
 MongoConnection.openConnection();
@@ -91,7 +91,7 @@ app.delete('/wishlist', async (req, res) => {
 // Generates an image url for a wishlist item. 
 const getImageUrl = (name, location) => {
     const unsplashUrl = 'https://api.unsplash.com/search/photos/';
-    const query = `?client_id=${ACCESS_KEY}&query=${name.toLowerCase()} ${location.toLowerCase()}`;
+    const query = `?client_id=${process.env.ACCESS_KEY}&query=${name.toLowerCase()} ${location.toLowerCase()}`;
     const apiUrl = unsplashUrl + query;
 
     return new Promise((resolve, reject) => {
@@ -118,7 +118,6 @@ const getImageUrl = (name, location) => {
         });
     });
 };
-
 
 const addDestination = async (name, location, description, imageUrl) => {
     const mongoCollection = MongoConnection.db.collection('wishlist');
@@ -175,7 +174,7 @@ const deleteDestination = async (id) => {
         .catch((error) => {
             throw error;
         });
-}
+};
 
 app.listen(port, () => {
     console.log(`Listening on port ${port}.`);
