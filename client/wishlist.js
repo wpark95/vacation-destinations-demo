@@ -19,19 +19,20 @@ const formSubmitHandler = async (e) => {
         destinationInfo[expectedFields[i]] = currElement.value;
         currElement.value = '';
     }
+    await getImageUrl('post', destinationInfo.name, destinationInfo.location)
+        .then(({ id, url, imgFetchSuccessful }) => {
+            destinationInfo.dbId = id;
+            destinationInfo.imageUrl = url;
+            if (!imgFetchSuccessful) {
+                displayErrorMessage('image');
+            }
+        })
+        .catch((err) => {
+            displayErrorMessage('server');
+        });
 
-    try {
-        await getImageUrl('post', destinationInfo.name, destinationInfo.location)
-            .then(({ id, url }) => {
-                destinationInfo.dbId = id;
-                destinationInfo.imageUrl = url;
-            });
-    } catch(error) {
-        displayErrorMessage(error);
-    } finally {
-        addToWishList(destinationInfo);
-        changeWishlistTitle();
-    }
+    addToWishList(destinationInfo);
+    changeWishlistTitle();
 };
 
 const addToWishList = (userInputs) => {
@@ -113,11 +114,14 @@ const editButtonHandler = async (e) => {
     }
     if (newDestName.length || newDestLocation.length) {
         await getImageUrl('put', destName.innerText, destLocation.innerText, destId)
-            .then(({ url }) => {
+            .then(({ url, imgFetchSuccessful }) => {
                 destImage.setAttribute('src', url);
+                if (!imgFetchSuccessful) {
+                    displayErrorMessage('image');
+                }
             })
-            .catch((error) => {
-                displayErrorMessage(error);
+            .catch((err) => {
+                displayErrorMessage('server');
             });
     }
 };
@@ -137,8 +141,8 @@ const removeButtonHandler = async (e) => {
         .then(() => {
             listItemContainer.remove();
         })
-        .catch((error) => {
-            displayErrorMessage(error);
+        .catch((err) => {
+            displayErrorMessage('server');
         });
 };
 
@@ -162,11 +166,22 @@ const getImageUrl = async (method, name, location, id) => (
         })
     })
         .then((res) => res.json())
+        .catch((err) => { 
+            throw err;
+         })
 );
 
-const displayErrorMessage = (error) => {
-    console.error(error);
-    // TODO: Create a modal and display error message to user.
+const displayErrorMessage = (errorType) => {
+    if (errorType === 'server') {
+        alert('We encountered an error while trying to connect to the server.\n' + 
+              'Your destination card(s) may not have been saved.\n' +
+              'Please try again and we apologize for the inconvenience.');
+    } 
+    if (errorType === 'image') {
+        alert('We encountered an error while searching for a relevant image for your destination.\n' + 
+              'If you edit your destination information using a more widely-used name or location, ' + 
+              'we will try our best to find a relevant image again.\n');
+    }
 };
 
 // Creates an edit or remove button used for each item in the wishlist

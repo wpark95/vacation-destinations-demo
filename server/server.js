@@ -21,24 +21,27 @@ app.post('/wishlist', async (req, res) => {
 
     await getImageUrl(name, location)
         .then((url) => {
+            console.log('URL fetch successful');
             info.url = url;
+            info.imgFetchSuccessful = true;
         })
         .catch((error) => {
+            console.log('Error fecting URL for requested image');
             info.url = defaultImgUrl;
-            info.error = error;
-            res.status(500);
+            info.imgFetchSuccessful = false;
         });
 
     await addDestination(name, location, info.url)
         .then(({ insertedId }) => {
             console.log('MongoDB add operation successful');
             info.id = insertedId.toString();
-            res.status(200);
+            res.status(201);
         })
         .catch((error) => {
-            info.error = error;
+            console.log(error);
             res.status(500);
         });
+        
     res.send(info);
 });
 
@@ -48,12 +51,14 @@ app.put('/wishlist', async (req, res) => {
 
     await getImageUrl(name, location)
         .then((url) => {
+            console.log('URL fetch successful');
             info.url = url;
+            info.imgFetchSuccessful = true;
         })
         .catch((error) => {
+            console.log('Error fecting URL for requested image');
             info.url = defaultImgUrl;
-            info.error = error;
-            res.status(500);
+            info.imgFetchSuccessful = false;
         });
 
     await editDestination(name, location, info.url, id)
@@ -62,7 +67,7 @@ app.put('/wishlist', async (req, res) => {
             res.status(200);
         })
         .catch((error) => {
-            info.error = error;
+            console.log(error);
             res.status(500);
         });
     res.send(info);
@@ -128,7 +133,7 @@ const addDestination = async (name, location, imageUrl) => {
                 return result;
             })
             .catch((error) => {
-                return error;
+                throw error;
             });
 };
 
@@ -152,7 +157,7 @@ const editDestination = async (name, location, imageUrl, id) => {
                 return result;
             })
             .catch((error) => {
-                return error;
+                throw error;
             });
 };
 
@@ -166,7 +171,7 @@ const deleteDestination = async (id) => {
             return result;
         })
         .catch((error) => {
-            return error;
+            throw error;
         });
 }
 
