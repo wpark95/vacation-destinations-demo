@@ -6,7 +6,7 @@ class MongoConnection {
         if (this.db) {
             return this.db;
         }
-        this.db = await MongoClient.connect(process.env.MONGO_CONNECTION_KEY, { useUnifiedTopology: true })
+        this.db = await MongoClient.connect(MONGO_CONNECTION_KEY, { useUnifiedTopology: true })
             .then((client) => {
                 this.db = client.db('vacation');
                 console.log('Connected to Databse');
