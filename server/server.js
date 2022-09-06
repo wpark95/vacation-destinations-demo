@@ -23,6 +23,7 @@ app.get('/wishlist', async (req, res) => {
             res.send(data);
         })
         .catch((error) => {
+            console.error(error);
             res.sendStatus(400);
         })
 });

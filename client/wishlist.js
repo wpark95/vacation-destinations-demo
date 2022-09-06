@@ -38,7 +38,6 @@ const formSubmitHandler = async (e) => {
 
 const addToWishList = (userInputs) => {
     const { _id, name, location, description, image } = userInputs;
-    console.log(userInputs);
     const wishlist = document.querySelector('#wishlist-container');
 
     // Create container for each wichlist item
