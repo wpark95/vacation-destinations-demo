@@ -153,8 +153,8 @@ const removeButtonHandler = async (e) => {
         });
 };
 
-const loadSavedDestinations = async () => {
-    return await fetch('/wishlist')
+const loadSavedDestinations = async () => (
+    await fetch('/wishlist')
     .then((res) => (res.json()))
     .then((data) => {
         if (data.length) {
@@ -165,8 +165,8 @@ const loadSavedDestinations = async () => {
     })
     .catch((err) => {
         console.error(err);
-    });
-};
+    })
+);
 
 // Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
 const changeWishlistTitle = () => {

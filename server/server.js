@@ -1,31 +1,29 @@
-const path = require('path');
 const express = require('express');
-const https = require('https');
+const path = require('path');
 const bodyParser = require('body-parser');
-const { MongoConnection } = require('../db/mongodb');
-const { ObjectId } = require('mongodb');
+const https = require('https');
+const { getDestination, saveDestination, editDestination, deleteDestination } = require('../db/mongoose');
 require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 const clientPath = path.join(__dirname, '..', 'client');
 const defaultImgUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
-MongoConnection.openConnection();
 
 app.use(bodyParser.json());
 app.use('/', express.static(clientPath));
 
 app.get('/wishlist', async (req, res) => {
-    const wishlist = await MongoConnection.db.collection('wishlist');
-
-    await wishlist.find().toArray()
-        .then((data) => {
+    await getDestination()
+        .then((destinations) => {
             res.status(200);
-            res.send(data);
+            res.send(destinations);
+            console.log('DB read successful');
         })
         .catch((error) => {
+            res.sendStatus(500);
+            console.log('DB read FAILED');
             console.error(error);
-            res.sendStatus(400);
         })
 });
 
@@ -35,25 +33,27 @@ app.post('/wishlist', async (req, res) => {
 
     await getImageUrl(name, location)
         .then((url) => {
-            console.log('URL fetch successful');
             info.url = url;
             info.imgFetchSuccessful = true;
+            console.log('Image URL fetch successful');
         })
         .catch((error) => {
-            console.log('Error fecting URL for requested image');
             info.url = defaultImgUrl;
             info.imgFetchSuccessful = false;
+            console.log('Image URL fetch FAILED');
+            console.error(error);
         });
 
-    await addDestination(name, location, description, info.url)
-        .then(({ insertedId }) => {
-            console.log('MongoDB add operation successful');
-            info.id = insertedId.toString();
+    await saveDestination(name, location, description, info.url)
+        .then((id) => {
+            info.id = id;
             res.status(201);
+            console.log('DB write successful');
         })
         .catch((error) => {
-            console.log(error);
             res.status(500);
+            console.log('DB write FAILED');
+            console.error(error);
         });
         
     res.send(info);
@@ -65,24 +65,26 @@ app.put('/wishlist', async (req, res) => {
 
     await getImageUrl(name, location)
         .then((url) => {
-            console.log('URL fetch successful');
             info.url = url;
             info.imgFetchSuccessful = true;
+            console.log('Image URL fetch successful');
         })
         .catch((error) => {
-            console.log('Error fecting URL for requested image');
             info.url = defaultImgUrl;
             info.imgFetchSuccessful = false;
+            console.log('Image URL fetch FAILED');
+            console.error(error);
         });
 
     await editDestination(name, location, description, info.url, id)
-        .then((result) => {
-            console.log('MongoDB edit operation successful');
+        .then(() => {
             res.status(200);
+            console.log('DB edit successful');
         })
         .catch((error) => {
-            console.log(error);
             res.status(500);
+            console.log('DB edit FAILED');
+            console.error(error);
         });
 
     res.send(info);
@@ -93,12 +95,13 @@ app.delete('/wishlist', async (req, res) => {
 
     await deleteDestination(id)
         .then((result) => {
-            console.log('MongoDB delete operation successful');
             res.status(200);
+            console.log('DB delete successful');
         })
         .catch((error) => {
-            console.log(error);
             res.status(500);
+            console.log('DB delete FAILED')
+            console.error(error);
         });
         
     res.send();
@@ -133,63 +136,6 @@ const getImageUrl = (name, location) => {
             reject(error);
         });
     });
-};
-
-const addDestination = async (name, location, description, imageUrl) => {
-    const wishlist = MongoConnection.db.collection('wishlist');
-
-    return await wishlist.insertOne(
-        {
-            name: name,
-            location: location,
-            description: description,
-            image: imageUrl,
-        })
-            .then((result) => {
-                return result;
-            })
-            .catch((error) => {
-                throw error;
-            });
-};
-
-const editDestination = async (name, location, description, imageUrl, id) => {
-    const wishlist = MongoConnection.db.collection('wishlist');
-
-    return await wishlist.findOneAndUpdate(
-        { _id: new ObjectId(id) },
-        {
-            $set: 
-            {
-                name: name,
-                location: location,
-                description: description,  
-                image: imageUrl,
-            }
-        },
-        {
-            upsert: true
-        })
-            .then((result) => {
-                return result;
-            })
-            .catch((error) => {
-                throw error;
-            });
-};
-
-const deleteDestination = async (id) => {
-    const wishlist = MongoConnection.db.collection('wishlist');
-
-    return await wishlist.deleteOne(
-        { _id: new ObjectId(id) }
-    )
-        .then((result) => {
-            return result;
-        })
-        .catch((error) => {
-            throw error;
-        });
 };
 
 app.listen(port, () => {
