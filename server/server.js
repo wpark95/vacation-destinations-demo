@@ -2,8 +2,8 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const https = require('https');
-const { getDestination, saveDestination, editDestination, editDescription, deleteDestination } = require('../db/mongoose');
 require('dotenv').config();
+const { getDestination, saveDestination, editDestination, editDescription, deleteDestination } = require('../db/mongoose');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -27,19 +27,19 @@ app.get('/wishlist', async (req, res) => {
         })
 });
 
-app.post('/wishlist', async (req, res) => {
+app.post('/destination', async (req, res) => {
     const { name, location, description } = req.body;
     const info = {};
 
     await getImageUrl(name, location)
         .then((url) => {
             info.url = url;
-            info.imgFetchSuccessful = true;
+            info.isDefaultImage = false;
             console.log('Image URL fetch successful');
         })
         .catch((error) => {
             info.url = defaultImgUrl;
-            info.imgFetchSuccessful = false;
+            info.isDefaultImage = true;
             console.log('Image URL fetch FAILED');
             console.error(error);
         });
@@ -59,19 +59,19 @@ app.post('/wishlist', async (req, res) => {
     res.send(info);
 });
 
-app.put('/wishlist', async (req, res) => {
+app.put('/destination', async (req, res) => {
     const { name, location, description, id } = req.body;
     const info = {};
 
     await getImageUrl(name, location)
         .then((url) => {
             info.url = url;
-            info.imgFetchSuccessful = true;
+            info.isDefaultImage = false;
             console.log('Image URL fetch successful');
         })
         .catch((error) => {
             info.url = defaultImgUrl;
-            info.imgFetchSuccessful = false;
+            info.isDefaultImage = true;
             console.log('Image URL fetch FAILED');
             console.error(error);
         });
@@ -105,11 +105,11 @@ app.put('/description', async (req, res) => {
     });
 })
 
-app.delete('/wishlist', async (req, res) => {
+app.delete('/destination', async (req, res) => {
     const { id } = req.body;
 
     await deleteDestination(id)
-        .then((result) => {
+        .then(() => {
             res.status(200);
             console.log('DB delete successful');
         })

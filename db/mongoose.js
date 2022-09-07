@@ -60,7 +60,7 @@ const editDestination = async (name, location, description, imageUrl, id) => {
             image: imageUrl,
         }
     )
-        .then(() => (
+        .then((res) => (
             res._id.toString())
         )
         .catch((error) => {
