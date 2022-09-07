@@ -5,8 +5,7 @@ const init = () => {
     loadSavedDestinations();
 };
 
-// Handles the submission of user inputs when Add To List button is clicked
-// (currently expecting destination name, location, and description)
+// Handles the submission of user inputs when "Add To List" button is clicked
 const formSubmitHandler = async (e) => {
     e.preventDefault();
     // Update the array below when changing input fields
@@ -21,7 +20,7 @@ const formSubmitHandler = async (e) => {
         currElement.value = '';
     }
 
-    await getImageUrl('post', destinationInfo.name, destinationInfo.location, destinationInfo.description)
+    await getImageUrl('post', destinationInfo)
         .then(({ id, url, imgFetchSuccessful }) => {
             destinationInfo._id = id;
             destinationInfo.image = url;
@@ -101,28 +100,42 @@ const addToWishList = (userInputs) => {
 // Uses original values if the user omits new values. Otherwise, sets newly provided values to the item
 const editButtonHandler = async (e) => {
     const listItemContainer = e.target.parentElement.parentElement;
-    const destId = listItemContainer.getAttribute('id');
     const destName = listItemContainer.querySelector('.list-item-name');
     const destLocation = listItemContainer.querySelector('.list-item-location');
     const destImage = listItemContainer.querySelector('.list-item-image');
     const destDescription = listItemContainer.querySelector('.list-item-description');
+    let needNewImage = false;
 
-    const newDestName = window.prompt('Enter new name (if left empty, we will use its current value)');
-    const newDestLocation = window.prompt('Enter new location (if left empty, we will use its current value)');
-    const newDescription = window.prompt('Enter new description (if left empty, we will use its current value)');
+    const newDestination = {
+        id: listItemContainer.getAttribute('id'),
+        name: window.prompt('Enter new name (if left empty, we will use its current value)'),
+        location: window.prompt('Enter new location (if left empty, we will use its current value)'),
+        description: window.prompt('Enter new description (if left empty, we will use its current value)'),
+    };
     
-    if (newDestName.length) {
-        destName.innerText = newDestName;
+    if (newDestination.name.length && newDestination.name !== destName.innerText) {
+        needNewImage = true;
+    } else {
+        newDestination.name = destName.innerText;
     }
-    if (newDestLocation.length) {
-        destLocation.innerText = newDestLocation;
+
+    if (newDestination.location.length && newDestination.location !== destLocation.innerText) {
+        needNewImage = true;
+    } else {
+        newDestination.location = destLocation.innerText;
     }
-    if (newDescription.length) {
-        destDescription.innerText = newDescription;
+
+    if (!newDestination.description.length) {
+        newDestination.description = destDescription.innerText;
     }
-    if (newDestName.length || newDestLocation.length || newDescription.length) {
-        await getImageUrl('put', destName.innerText, destLocation.innerText, destDescription.innerText, destId)
+
+    // Get new image URL if needed. Otherwise, simply update the description.
+    if (needNewImage) {
+        await getImageUrl('put', newDestination)
             .then(({ url, imgFetchSuccessful }) => {
+                destName.innerText = newDestination.name;
+                destLocation.innerText = newDestination.location;
+                destDescription.innerText = newDestination.description;
                 destImage.setAttribute('src', url);
                 if (!imgFetchSuccessful) {
                     displayErrorMessage('image');
@@ -131,6 +144,21 @@ const editButtonHandler = async (e) => {
             .catch((err) => {
                 displayErrorMessage('server');
             });
+    } else {
+        await fetch('/description', {
+            method: 'put',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: newDestination.id,
+                description: newDestination.description
+            }),
+        })
+            .then((res) => {
+                destDescription.innerText = newDestination.description;
+            })
+            .catch((err) => { 
+                throw err;
+            })
     }
 };
 
@@ -156,8 +184,6 @@ const removeButtonHandler = async (e) => {
         .catch((err) => {
             displayErrorMessage('server');
         });
-    
-
 };
 
 const loadSavedDestinations = async () => (
@@ -180,7 +206,6 @@ const wishlistEmptyTitle = (listIsEmpty) => {
     if (listIsEmpty) {
         wishlistTitle = document.querySelector('#wishlist-title');
         wishlistTitle.innerText = 'Enter destination details';
-
     } else {
         wishlistTitle = document.querySelector('#wishlist-title');
         wishlistTitle.innerText = 'My Wishlist';
@@ -190,15 +215,15 @@ const wishlistEmptyTitle = (listIsEmpty) => {
 /*
     Helper Functions
 */
-const getImageUrl = async (method, name, location, description, id) => (
+const getImageUrl = async (method, destinationObj) => (
     await fetch('/wishlist', {
         method: method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-            name: name,
-            location: location,
-            description: description,
-            id: id,
+            name: destinationObj.name,
+            location: destinationObj.location,
+            description: destinationObj.description,
+            id: destinationObj.id,
         })
     })
         .then((res) => res.json())
@@ -227,12 +252,14 @@ const createEditOrRemoveButton = (buttonType) => {
     button.innerText = buttonType;
     button.setAttribute('class', 'card-button');
     button.setAttribute('id', buttonId);
+
     if (buttonType === 'Edit') {
         button.addEventListener('click', editButtonHandler);
     }
     if (buttonType === 'Remove') {
         button.addEventListener('click', removeButtonHandler) 
     }
+
     return button;
 };
 

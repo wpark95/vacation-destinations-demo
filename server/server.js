@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const https = require('https');
-const { getDestination, saveDestination, editDestination, deleteDestination } = require('../db/mongoose');
+const { getDestination, saveDestination, editDestination, editDescription, deleteDestination } = require('../db/mongoose');
 require('dotenv').config();
 
 const app = express();
@@ -78,7 +78,7 @@ app.put('/wishlist', async (req, res) => {
 
     await editDestination(name, location, description, info.url, id)
         .then(() => {
-            res.status(200);
+            res.status(201);
             console.log('DB edit successful');
         })
         .catch((error) => {
@@ -89,6 +89,21 @@ app.put('/wishlist', async (req, res) => {
 
     res.send(info);
 });
+
+app.put('/description', async (req, res) => {
+    const { id, description } = req.body;
+
+    await editDescription(description, id)
+    .then(() => {
+        res.sendStatus(201);
+        console.log('DB edit successful');
+    })
+    .catch((error) => {
+        res.sendStatus(500);
+        console.log('DB edit FAILED');
+        console.error(error);
+    });
+})
 
 app.delete('/wishlist', async (req, res) => {
     const { id } = req.body;

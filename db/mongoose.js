@@ -60,13 +60,30 @@ const editDestination = async (name, location, description, imageUrl, id) => {
             image: imageUrl,
         }
     )
-        .then((res) => (
+        .then(() => (
             res._id.toString())
         )
         .catch((error) => {
             console.error(error);
         });
 };
+
+const editDescription = async (description, id) => {
+    return await Destination.findOneAndUpdate(
+        {
+            _id: id
+        },
+        {
+            description: description
+        }
+    )
+        .then((res) => (
+            res._id.toString())
+        )
+        .catch((error) => {
+            console.error(error);
+        });
+} 
 
 const deleteDestination = async (id) => {
     return await Destination.findOneAndDelete(
@@ -80,4 +97,4 @@ const deleteDestination = async (id) => {
         });
 };
 
-module.exports = { getDestination, saveDestination, editDestination, deleteDestination }
+module.exports = { getDestination, saveDestination, editDestination, editDescription, deleteDestination }
