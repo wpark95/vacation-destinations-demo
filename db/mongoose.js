@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
 require('dotenv').config();
 const mongoose = require('mongoose');
-mongoose.connect(process.env.MONGO_CONNECTION_STRING);
+const connectionStr = process.env.MONGO_CONNECTION_STRING;
+mongoose.connect(connectionStr);
 const db = mongoose.connection;
 
 db.once('open', _ => {
