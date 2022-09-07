@@ -123,7 +123,7 @@ const getImageUrl = (name, location) => {
                 try {
                     const results = JSON.parse(data).results;
                     const rand = Math.floor(Math.random() * results.length);
-                    if (rand && results[rand].urls.small.length) {
+                    if (results[rand].urls.small.length) {
                         resolve(results[rand].urls.small)
                     } else { 
                         reject('URL length is 0 (invalid)');

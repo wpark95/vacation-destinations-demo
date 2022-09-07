@@ -1,5 +1,4 @@
 require('dotenv').config();
-const ObjectId = require('mongodb').ObjectId;
 const mongoose = require('mongoose');
 mongoose.connect(process.env.MONGO_CONNECTION_STRING);
 const db = mongoose.connection;
@@ -71,7 +70,7 @@ const editDestination = async (name, location, description, imageUrl, id) => {
 
 const deleteDestination = async (id) => {
     return await Destination.findOneAndDelete(
-        { _id: new ObjectId(id) }
+        { _id: new mongoose.Types.ObjectId(id) }
     )
         .then((result) => {
             return result;

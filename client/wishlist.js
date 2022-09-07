@@ -20,6 +20,7 @@ const formSubmitHandler = async (e) => {
         destinationInfo[expectedFields[i]] = currElement.value;
         currElement.value = '';
     }
+
     await getImageUrl('post', destinationInfo.name, destinationInfo.location, destinationInfo.description)
         .then(({ id, url, imgFetchSuccessful }) => {
             destinationInfo._id = id;
@@ -31,9 +32,9 @@ const formSubmitHandler = async (e) => {
         .catch((err) => {
             displayErrorMessage('server');
         });
-
+    
     addToWishList(destinationInfo);
-    changeWishlistTitle();
+    wishlistEmptyTitle(false);
 };
 
 const addToWishList = (userInputs) => {
@@ -106,9 +107,9 @@ const editButtonHandler = async (e) => {
     const destImage = listItemContainer.querySelector('.list-item-image');
     const destDescription = listItemContainer.querySelector('.list-item-description');
 
-    const newDestName = window.prompt('Enter new name');
-    const newDestLocation = window.prompt('Enter new location');
-    const newDescription = window.prompt('Enter new description');
+    const newDestName = window.prompt('Enter new name (if left empty, we will use its current value)');
+    const newDestLocation = window.prompt('Enter new location (if left empty, we will use its current value)');
+    const newDescription = window.prompt('Enter new description (if left empty, we will use its current value)');
     
     if (newDestName.length) {
         destName.innerText = newDestName;
@@ -137,6 +138,7 @@ const editButtonHandler = async (e) => {
 const removeButtonHandler = async (e) => {
     const listItemContainer = e.target.parentElement.parentElement;
     const destId = listItemContainer.getAttribute('id');
+    const totalDestNum = listItemContainer.parentElement.children.length; // The number of current total destinations
 
     await fetch('/wishlist', {
         method: 'delete',
@@ -147,10 +149,15 @@ const removeButtonHandler = async (e) => {
     })
         .then(() => {
             listItemContainer.remove();
+            if (totalDestNum === 1) {
+                wishlistEmptyTitle(true);
+            }
         })
         .catch((err) => {
             displayErrorMessage('server');
         });
+    
+
 };
 
 const loadSavedDestinations = async () => (
@@ -169,9 +176,15 @@ const loadSavedDestinations = async () => (
 );
 
 // Updates wishlist title to become 'My Wishlist!' when user adds an item to the wishlist
-const changeWishlistTitle = () => {
-    wishlistTitle = document.querySelector('#wishlist-title');
-    wishlistTitle.innerText = 'My Wishlist';
+const wishlistEmptyTitle = (listIsEmpty) => {
+    if (listIsEmpty) {
+        wishlistTitle = document.querySelector('#wishlist-title');
+        wishlistTitle.innerText = 'Enter destination details';
+
+    } else {
+        wishlistTitle = document.querySelector('#wishlist-title');
+        wishlistTitle.innerText = 'My Wishlist';
+    }
 };
 
 /*
