@@ -22,17 +22,16 @@ const destinationSchema = new mongoose.Schema({
 });
 const Destination = mongoose.model('Destination', destinationSchema);
 
+// Database CRUD Functions
+
 const getDestination = async () => (
     await Destination.find()
-        .then((destinations) => (
-            destinations
-        ))
+        .then((destinations) => destinations)
         .catch((error) => {
             console.error(error);
         })
 );
 
-// Helper Functions
 const saveDestination = async (name, location, description, imageUrl) => {
     const newDestination = new Destination({
         name: name,
@@ -41,19 +40,17 @@ const saveDestination = async (name, location, description, imageUrl) => {
         image: imageUrl
     });
 
-    return await newDestination.save()
-        .then((res) => (
-            res._id.toString())
-        )
+    await newDestination.save()
+        .then((res) => res._id.toString())
         .catch((error) => {
-            console.error(error);
+            throw error;
         });
 };
 
 const editDestination = async (name, location, description, imageUrl, id) => {
     return await Destination.findOneAndUpdate(
         { 
-            _id: id
+            _id: mongoose.Types.ObjectId(id)
         },
         {
             name: name,
@@ -62,9 +59,7 @@ const editDestination = async (name, location, description, imageUrl, id) => {
             image: imageUrl,
         }
     )
-        .then((res) => (
-            res._id.toString())
-        )
+        .then((res) => res._id.toString())
         .catch((error) => {
             console.error(error);
         });
@@ -73,27 +68,23 @@ const editDestination = async (name, location, description, imageUrl, id) => {
 const editDescription = async (description, id) => {
     return await Destination.findOneAndUpdate(
         {
-            _id: id
+            _id: mongoose.Types.ObjectId(id)
         },
         {
             description: description
         }
     )
-        .then((res) => (
-            res._id.toString())
-        )
+        .then((res) => res._id.toString())
         .catch((error) => {
             console.error(error);
         });
-} 
+};
 
 const deleteDestination = async (id) => {
     return await Destination.findOneAndDelete(
-        { _id: new mongoose.Types.ObjectId(id) }
+        { _id: mongoose.Types.ObjectId(id) }
     )
-        .then((result) => {
-            return result;
-        })
+        .then((result) => result)
         .catch((error) => {
             throw error;
         });

@@ -228,6 +228,9 @@ const removeButtonHandler = async (e) => {
     }),
   })
     .then(() => {
+      while(listItemContainer.lastChild) {
+        listItemContainer.lastChild.remove();
+      }
       listItemContainer.remove();
       if (totalDestNum === 1) {
         wishlistEmptyTitle(true);
