@@ -14,4 +14,4 @@ db.on('error', (err) => {
     console.error('connection error: ', err);
 });
 
-module.exports = { db };
+module.exports = db;

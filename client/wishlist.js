@@ -200,7 +200,7 @@ const editButtonHandler = async (e) => {
   // If new image is NOT needed but the description needs to be updated
   // simply update the description.
   if (!needNewImage && updateDescription) {
-    await fetch('/description', {
+    await fetch('/destination', {
       method: 'put',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
