@@ -104,6 +104,7 @@ textarea {
 
 .list-item-container {
     height: fit-content;
+    width: 20rem;
     margin: 2rem;
     display: flex;
     flex-direction: column;
@@ -135,9 +136,13 @@ textarea {
     font-weight: normal;
 }
 
+p {
+    word-wrap: break-word;
+}
+
 .list-item-image {
-    max-height: 20rem;
-    max-width: 20rem;
+    max-height: 100%;
+    max-width: 100%;
 }
 
 .btn-container {

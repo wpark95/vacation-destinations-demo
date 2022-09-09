@@ -1,10 +1,15 @@
 /* eslint-disable no-undef */
 const express = require('express');
 const https = require('https');
-const Destination = require('../db/Destination');
 const bodyParser = require('body-parser');
 require('dotenv').config();
-const ObjectId = require('mongoose').Types.ObjectId;
+const {
+    getWishlist, 
+    saveDestination, 
+    editDescription, 
+    editDestination, 
+    deleteDestination 
+} = require('../db/mongoose');
 
 const app = express();
 const defaultImgUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
@@ -12,7 +17,7 @@ const defaultImgUrl = 'https://c.tenor.com/_4YgA77ExHEAAAAd/rick-roll.gif';
 app.use(bodyParser.json());
 
 app.get('/wishlist', (req, res) => {
-    Destination.find()
+    getWishlist()
         .then((documents) => {
             res.status(200);
             res.send(documents);
@@ -91,7 +96,7 @@ app.put('/destination', async (req, res) => {
     }
 });
 
-app.delete('/destination', async (req, res) => {
+app.delete('/destination', (req, res) => {
     const { id } = req.body;
 
     deleteDestination(id)
@@ -139,51 +144,5 @@ const getImageUrl = (name, location) => {
         });
     });
 };
-
-// Database Read, Update, and Delete Functions
-const saveDestination = (name, location, description, imageUrl) => {
-    const newDestination = new Destination({
-        name: name,
-        location: location,
-        description: description,
-        image: imageUrl
-    });
-
-    return newDestination.save()
-        .then((res) => res._id.toString());
-};
-
-const editDestination = (name, location, description, imageUrl, id) => (
-    Destination.findOneAndUpdate(
-        { 
-            _id: new ObjectId(id)
-        },
-        {
-            name: name,
-            location: location,
-            description: description,
-            image: imageUrl,
-        }
-    )
-);
-
-const editDescription = async (description, id) => (
-    Destination.findOneAndUpdate(
-        {
-            _id: new ObjectId(id)
-        },
-        {
-            description: description
-        }
-    )
-);
-
-const deleteDestination = async (id) => (
-    Destination.findOneAndDelete(
-        {
-            _id: new ObjectId(id) 
-        }
-    )
-);
 
 module.exports = app;
