@@ -135,7 +135,7 @@ const formSubmitHandler = async (e) => {
       wishlistEmptyTitle(false);
     })
     .catch(() => {
-      displayErrorMessage('server');
+      displayErrorMessage();
     });
 };
 
@@ -175,7 +175,7 @@ const editButtonHandler = async (e) => {
     updateDescription = true;
   }
 
-  // Get new image URL if needed. Otherwise, simply update the description.
+  // If new image URL is needed, update the destination with new information.
   if (needNewImage) {
     await fetch('/destination', {
       method: 'put',
@@ -193,9 +193,12 @@ const editButtonHandler = async (e) => {
         }
       })
       .catch(() => {
-        displayErrorMessage('server');
+        displayErrorMessage();
       });
   } 
+
+  // If new image is NOT needed but the description needs to be updated
+  // simply update the description.
   if (!needNewImage && updateDescription) {
     await fetch('/description', {
       method: 'put',
@@ -237,7 +240,7 @@ const removeButtonHandler = async (e) => {
       }
     })
     .catch(() => {
-      displayErrorMessage('server');
+      displayErrorMessage();
     });
 };
 
@@ -253,14 +256,14 @@ const wishlistEmptyTitle = (listIsEmpty) => {
 };
 
 const displayErrorMessage = (errorType) => {
-  if (errorType === 'server') {
-    alert('We encountered an error while trying to connect to the server.\n'
-              + 'Your destination card(s) may not have been saved.\n'
-              + 'Please try again and we apologize for the inconvenience.');
-  } else {
+  if (errorType === 'image') {
     alert('We encountered an error while searching for a relevant image for your destination.\n'
-              + 'If you edit your destination information using a more widely-used name or location, '
-              + 'we will try our best to find a relevant image again.\n');
+    + 'If you edit your destination information using a more widely-used name or location, '
+    + 'we will try our best to find a relevant image again.\n');
+  } else {
+    alert('We encountered an error while trying to connect to the server.\n'
+    + 'Your destination card(s) may not have been saved.\n'
+    + 'Please try again and we apologize for the inconvenience.');
   }
 };
 
